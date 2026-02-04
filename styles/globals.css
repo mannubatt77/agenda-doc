@@ -1,0 +1,242 @@
+@import './reset.css';
+@import './variables.css';
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-app);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-input);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* --- RESPONSIVE UTILITIES --- */
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-only {
+        display: block;
+    }
+
+    main.main-content {
+        padding: 0.5rem !important;
+    }
+
+    /* Adjust base font size for mobile if needed */
+    html {
+        font-size: 14px;
+    }
+}
+
+/* Landscape Mode Enforcement Overlay */
+#orientation-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-app);
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Show overlay only on Mobile Portrait */
+@media screen and (max-width: 1024px) and (orientation: portrait) {
+    #orientation-overlay {
+        display: flex;
+    }
+
+    /* Optional: Hide main content to prevent scrolling behind */
+    body>*:not(#orientation-overlay) {
+        overflow: hidden;
+        height: 100vh;
+    }
+}
+
+/* Responsive Grid for Forms/Lists (Sanctions, Topic Log) */
+.responsive-grid {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) 2fr;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    .responsive-grid {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dashboard-container {
+        height: auto !important;
+        min-height: 0 !important;
+    }
+}
+
+/* Scrollable Tabs */
+.tabs-scroll-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    /* Hide scrollbar for Chrome/Safari/Opera */
+    -webkit-overflow-scrolling: touch;
+}
+
+.tabs-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- PRINT STYLES --- */
+/* --- PRINT STYLES --- */
+@media print {
+    @page {
+        size: landscape;
+        margin: 1cm;
+    }
+
+    /* Hide non-printable elements */
+    .no-print,
+    button,
+    nav,
+    header,
+    aside,
+    form {
+        display: none !important;
+    }
+
+    /* Reset Body and Background */
+    body {
+        background-color: white !important;
+        color: black !important;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        font-size: 11pt;
+    }
+
+    /* Reset Layout Containers */
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        overflow: visible !important;
+    }
+
+    /* Reset Page specific containers (override inline styles) */
+    main>div {
+        max-width: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+    }
+
+    /* Clean up specific divs */
+    div {
+        overflow: visible !important;
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Headings */
+    h1 {
+        text-align: center;
+        margin-bottom: 20px !important;
+        font-size: 20pt !important;
+        color: black !important;
+    }
+
+    h1 span {
+        display: block;
+        font-size: 14pt !important;
+        margin-top: 5px;
+    }
+
+    /* Table Improvements */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 8pt;
+        /* Reduced from 10pt */
+        table-layout: fixed;
+        /* Force fixed table layout to respect widths if possible */
+    }
+
+    th,
+    td {
+        border: 1px solid #000 !important;
+        padding: 2px 4px !important;
+        /* Reduced padding */
+        color: black !important;
+        background-color: transparent !important;
+        word-wrap: break-word;
+        /* Ensure valid word breaking */
+    }
+
+    th {
+        font-weight: bold;
+        background-color: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Ensure Headers Repeat on New Pages */
+    thead {
+        display: table-header-group;
+    }
+
+    tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* Force Black Text Everywhere */
+    * {
+        color: #000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Target Averages */
+    .print-average {
+        font-weight: 800 !important;
+        font-size: 9pt !important;
+        /* One point larger than base 8pt */
+    }
+
+    /* Hide scrollbars specifically */
+    * {
+        scrollbar-width: none !important;
+    }
+}
