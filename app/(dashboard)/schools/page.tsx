@@ -258,7 +258,7 @@ export default function SchoolsPage() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                                 <div>
                                     <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', lineHeight: 1.2 }}>{school.name}</h2>
-                                    {school.term1Start && (
+                                    {school.term1_start && (
                                         <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                                             <CalendarRange size={12} /> Calendario Configurado
                                         </div>

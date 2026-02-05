@@ -372,7 +372,7 @@ export default function CourseDashboardPage({ params }: { params: Promise<{ cour
                 onChange={(e) => handleGradeChange(studentId, col, e.target.value)}
                 style={{
                     width: '100%', height: '100%', border: 'none', backgroundColor: 'transparent',
-                    textAlign: 'center', color: 'white', padding: '0.75rem',
+                    textAlign: 'center', padding: '0.75rem',
                     fontWeight: (val !== null && val !== undefined && val < 7) ? 'bold' : 'normal',
                     color: (val !== null && val !== undefined && val < 7) ? 'var(--content-red)' : 'white'
                 }}

@@ -433,7 +433,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     const addEvent = async (courseId: string, event: Omit<CourseEvent, "id" | "course_id">) => {
         const { data } = await supabase.from('events').insert({
-            course_id: courseId, description: event.description || "",
+            course_id: courseId,
             ...event
         }).select().single();
         if (data) setEvents(prev => [...prev, data]);
@@ -502,7 +502,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     const addTopicLog = async (courseId: string, log: Omit<TopicLog, "id" | "course_id">) => {
         const { data } = await supabase.from('topic_logs').insert({
-            course_id: courseId, content: log.content || "",
+            course_id: courseId,
             ...log
         }).select().single();
         if (data) setTopicLogs(prev => [...prev, data]);

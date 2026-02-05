@@ -47,7 +47,7 @@ export default function CalendarPage() {
                     )}
 
                     {monthEvents.map(event => {
-                        const course = courses.find(c => c.id === event.courseId);
+                        const course = courses.find(c => c.id === event.course_id);
                         return (
                             <div key={event.id} style={{ display: 'flex', gap: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-input)', borderRadius: 'var(--radius-md)', alignItems: 'center' }}>
                                 <div style={{ textAlign: 'center', minWidth: '50px' }}>

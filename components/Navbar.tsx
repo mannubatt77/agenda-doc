@@ -26,10 +26,10 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
             )
             .slice(0, 10) // Limit results
             .map(s => {
-                const course = courses.find(c => c.id === s.courseId);
+                const course = courses.find(c => c.id === s.course_id);
                 return {
                     student: s,
-                    courseId: s.courseId,
+                    courseId: s.course_id,
                     courseName: course ? `${course.name} ${course.year}° ${course.division}` : 'Curso desconocido'
                 };
             });
@@ -73,7 +73,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
 
         // If only one is present, use first two chars or just one
         if (first && !last) return user.name.substring(0, 2).toUpperCase();
-        if (!first && last) return user.surname.substring(0, 2).toUpperCase();
+        if (!first && last) return user.surname!.substring(0, 2).toUpperCase();
 
         return `${first}${last}`;
     }, [user]);

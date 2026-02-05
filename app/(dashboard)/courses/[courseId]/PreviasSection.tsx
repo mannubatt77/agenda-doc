@@ -62,7 +62,7 @@ export function PreviasSection({ courseId }: PreviasSectionProps) {
 
     const getGradeValue = (examId: string, studentId: string) => {
         const g = pendingGrades.find(pg => pg.exam_id === examId && pg.student_id === studentId);
-        return g ? g.grade : "";
+        return (g && g.grade !== null) ? g.grade : "";
     };
 
 

@@ -107,7 +107,7 @@ export function AttendanceSection({ courseId, students, allAttendance, markAtten
         const oldRecords = getAttendance(courseId, editingDate);
 
         // Save as new date
-        const newRecords = oldRecords.map(r => ({ ...r, studentId: r.studentId, present: r.present, justification: r.justification })); // map is same structure
+        const newRecords = oldRecords.map(r => ({ ...r, studentId: r.student_id, present: r.present, justification: r.justification })); // map is same structure
         markAttendance(courseId, newEditDateVal, newRecords);
 
         // Delete old date (by sending empty array? No, markAttendance expects records to *set* for that date. 
@@ -243,7 +243,7 @@ export function AttendanceSection({ courseId, students, allAttendance, markAtten
                 </table>
                 {attendanceDates.length === 0 && (
                     <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                        No hay asistencias tomadas. Haz clic en "Nueva Asistencia".
+                        No hay asistencias tomadas. Haz clic en &quot;Nueva Asistencia&quot;.
                     </div>
                 )}
             </div>
