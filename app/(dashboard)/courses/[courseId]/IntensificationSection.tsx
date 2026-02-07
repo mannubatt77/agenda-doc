@@ -31,7 +31,7 @@ export function IntensificationSection({ courseId }: IntensificationSectionProps
                     cg.period === g.period &&
                     cg.date === g.date &&
                     cg.description === g.description &&
-                    cg.value !== null && cg.value < 6
+                    cg.value !== null && cg.value < 7
                 ).length;
 
                 if (failed > 0) {
@@ -105,7 +105,7 @@ function ExamIntensificationBlock({ exam, courseId, allStudents, allGrades }: {
             gr.date === exam.date &&
             gr.description === exam.description
         );
-        return g && g.value !== null && g.value < 6;
+        return g && g.value !== null && g.value < 7;
     }).sort((a, b) => a.surname.localeCompare(b.surname));
 
     const [isAddInstanceOpen, setIsAddInstanceOpen] = useState(false);
