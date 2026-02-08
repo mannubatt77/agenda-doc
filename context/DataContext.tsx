@@ -19,6 +19,7 @@ export interface School {
     term3_start?: string;
     term3_end?: string;
     term_structure: 'bi' | 'tri';
+    academic_year: number;
 }
 
 export interface Course {
@@ -214,6 +215,10 @@ interface DataContextType {
 
     intensificationResults: IntensificationResult[];
     addIntensificationResult: (instanceId: string, studentId: string, grade: number | null, isApproved: boolean) => Promise<void>;
+
+    selectedYear: number;
+    setSelectedYear: (year: number) => void;
+    createAcademicYear: (targetYear: number) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -222,6 +227,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth();
 
     // State for all data
+    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear()); // Default to current year, e.g. 2026
     const [schools, setSchools] = useState<School[]>([]);
     const [courses, setCourses] = useState<Course[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
@@ -258,7 +264,17 @@ export function DataProvider({ children }: { children: ReactNode }) {
             // For now, we assume we fetch the user's data.
 
             // 1. Schools
-            const { data: s } = await supabase.from('schools').select('*').eq('user_id', user.id);
+            let query = supabase.from('schools').select('*').eq('user_id', user.id);
+            // Ideally filter by year if column exists. 
+            // We'll rely on client side filtering temporarily if migration isn't run, 
+            // but the SQL query is safer if the column exists.
+            query = query.eq('academic_year', selectedYear);
+
+            const { data: s, error: schoolsError } = await query;
+            if (schoolsError) {
+                // formatting error likely means column doesn't exist yet
+                console.warn("Error fetching schools (possibly missing academic_year column):", schoolsError);
+            }
             if (s) setSchools(s);
 
             // For other tables, if we had strict RLS for 'owner', we might need to join keys.
@@ -322,7 +338,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         fetchData();
 
         // Setup Realtime if ambitious, but let's stick to Fetch.
-    }, [user]);
+    }, [user, selectedYear]);
 
     // --- ACTIONS ---
 
@@ -587,6 +603,22 @@ export function DataProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const createAcademicYear = async (targetYear: number) => {
+        if (!user) return;
+        const { error } = await supabase.rpc('copy_academic_year_structure', {
+            source_year: selectedYear,
+            target_year: targetYear
+        });
+
+        if (error) {
+            console.error("Error creating academic year:", error);
+            alert("Error creando ciclo lectivo: " + error.message);
+        } else {
+            alert(`Ciclo lectivo ${targetYear} creado exitosamente.`);
+            setSelectedYear(targetYear);
+        }
+    };
+
     return (
         <DataContext.Provider value={{
             schools, courses, students, attendance, grades, events, homeworks, homeworkRecords, sanctions, topicLogs,
@@ -607,7 +639,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
             // Intensification
             intensificationInstances, getIntensificationInstances, addIntensificationInstance, deleteIntensificationInstance,
-            intensificationResults, addIntensificationResult
+            intensificationResults, addIntensificationResult,
+
+            selectedYear, setSelectedYear, createAcademicYear
         }}>
             {children}
         </DataContext.Provider>

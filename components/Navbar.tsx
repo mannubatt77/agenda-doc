@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
     const { user } = useAuth();
-    const { events, students, courses } = useData();
+    const { events, students, courses, selectedYear, setSelectedYear } = useData();
     const [showNotifications, setShowNotifications] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showSearchResults, setShowSearchResults] = useState(false);
@@ -117,6 +117,30 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                {/* Year Selector */}
+                <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                    style={{
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: 'var(--radius-md)',
+                        backgroundColor: 'var(--bg-input)', // Slightly different bg to stand out
+                        border: '1px solid var(--glass-border)',
+                        color: 'var(--accent-primary)',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        outline: 'none'
+                    }}
+                >
+                    {[selectedYear - 1, selectedYear, selectedYear + 1].sort().map(y => (
+                        <option key={y} value={y} style={{ backgroundColor: 'var(--bg-panel)', color: 'white' }}>
+                            {y}
+                        </option>
+                    ))}
+                    {/* Add more generic range if needed */}
+                </select>
+
                 <div className="desktop-only" style={{ position: 'relative' }}>
                     <Search size={18} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input

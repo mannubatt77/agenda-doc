@@ -1,12 +1,15 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { useData } from "@/context/DataContext";
 import { useState } from "react";
-import { Camera, Plus, Trash2, Save } from "lucide-react";
+import { Camera, Plus, Trash2, Save, Calendar } from "lucide-react";
 
 export default function ProfilePage() {
     const { user, updateProfile } = useAuth();
+    const { createAcademicYear } = useData();
     const [isEditing, setIsEditing] = useState(false);
+    const [newYearInput, setNewYearInput] = useState((new Date().getFullYear() + 1).toString());
 
     // Local state for form
     const [name, setName] = useState(user?.name || "");
@@ -213,6 +216,66 @@ export default function ProfilePage() {
                     </div>
                 </div>
             </div>
+
+            {/* Academic Year Management */}
+            <div style={{
+                marginTop: '2rem',
+                backgroundColor: 'var(--bg-panel)',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--glass-border)',
+                padding: '2rem'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                    <Calendar size={24} style={{ color: 'var(--accent-primary)' }} />
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Administrar Ciclos Lectivos</h2>
+                </div>
+
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                    Al crear un nuevo ciclo lectivo, se copiarán todas las escuelas y cursos del año actual al nuevo año.
+                    Los alumnos y notas <strong>NO</strong> se copiarán, permitiendo iniciar un nuevo año limpio conservando la estructura.
+                </p>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <input
+                        type="number"
+                        value={newYearInput}
+                        onChange={(e) => setNewYearInput(e.target.value)}
+                        placeholder="Año (ej. 2027)"
+                        style={{
+                            padding: '0.75rem',
+                            borderRadius: 'var(--radius-md)',
+                            backgroundColor: 'var(--bg-app)',
+                            border: '1px solid var(--glass-border)',
+                            color: 'white',
+                            width: '120px'
+                        }}
+                    />
+                    <button
+                        onClick={() => {
+                            const y = parseInt(newYearInput);
+                            if (isNaN(y) || y < 2020 || y > 2100) {
+                                alert("Ingrese un año válido");
+                                return;
+                            }
+                            if (confirm(`¿Estás seguro de crear el ciclo lectivo ${y}? Esto duplicará tus escuelas y cursos.`)) {
+                                createAcademicYear(y);
+                            }
+                        }}
+                        style={{
+                            padding: '0.75rem 1.5rem',
+                            borderRadius: 'var(--radius-md)',
+                            backgroundColor: 'var(--bg-input)',
+                            border: '1px solid var(--glass-border)',
+                            color: 'var(--accent-primary)',
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Crear Ciclo Lectivo
+                    </button>
+                </div>
+            </div>
+
         </div>
     );
 }
