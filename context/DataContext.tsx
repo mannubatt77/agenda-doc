@@ -253,6 +253,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
             setSchools([]); setCourses([]); setStudents([]); setAttendance([]);
             setGrades([]); setEvents([]); setHomeworks([]); setHomeworkRecords([]);
             setSanctions([]); setTopicLogs([]);
+            setPendingStudents([]); setPendingExams([]); setPendingGrades([]);
+            setIntensificationInstances([]); setIntensificationResults([]);
             return;
         }
 
@@ -333,6 +335,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
             const { data: tl } = await supabase.from('topic_logs').select('*');
             if (tl) setTopicLogs(tl);
+
+            const { data: ii } = await supabase.from('intensification_instances').select('*');
+            if (ii) setIntensificationInstances(ii);
+
+            const { data: ir } = await supabase.from('intensification_results').select('*');
+            if (ir) setIntensificationResults(ir);
         };
 
         fetchData();
