@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Agenda.doc</string>
+    <string name="title_activity_main">Agenda.doc</string>
+    <string name="package_name">com.agenda.doc</string>
+    <string name="custom_url_scheme">com.agenda.doc</string>
+</resources>

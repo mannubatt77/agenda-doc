@@ -26,13 +26,14 @@ export default function LoginPage() {
         <div style={{
             minHeight: '100vh',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem'
+            flexDirection: 'column',
+            padding: '2rem',
+            overflowY: 'auto'
         }}>
             <div style={{
                 width: '100%',
                 maxWidth: '420px',
+                margin: 'auto',
                 backgroundColor: 'var(--bg-panel)',
                 borderRadius: 'var(--radius-lg)',
                 border: '1px solid var(--glass-border)',

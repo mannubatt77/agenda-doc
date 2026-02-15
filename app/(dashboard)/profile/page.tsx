@@ -7,7 +7,7 @@ import { Camera, Plus, Trash2, Save, Calendar } from "lucide-react";
 
 export default function ProfilePage() {
     const { user, updateProfile } = useAuth();
-    const { createAcademicYear } = useData();
+    const { createAcademicYear, subscription } = useData();
     const [isEditing, setIsEditing] = useState(false);
     const [newYearInput, setNewYearInput] = useState((new Date().getFullYear() + 1).toString());
 
@@ -214,6 +214,72 @@ export default function ProfilePage() {
                         </div>
 
                     </div>
+                </div>
+            </div>
+
+            {/* Subscription Info */}
+            <div style={{
+                marginTop: '2rem',
+                backgroundColor: 'var(--bg-panel)',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--glass-border)',
+                padding: '2rem'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                    <div style={{ color: 'var(--accent-primary)' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M2 12h20" /></svg>
+                    </div>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Suscripción</h2>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Plan Actual</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <span style={{
+                                fontSize: '1.5rem',
+                                fontWeight: 'bold',
+                                color: subscription?.status === 'active' ? 'var(--content-green)' : 'var(--text-primary)'
+                            }}>
+                                {subscription?.status === 'active' ? 'Profesional (Anual)' : 'Prueba Gratuita'}
+                            </span>
+                            {subscription?.status === 'active' && (
+                                <span style={{
+                                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                                    color: 'var(--content-green)',
+                                    padding: '0.25rem 0.75rem',
+                                    borderRadius: '999px',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 'bold',
+                                    border: '1px solid rgba(34, 197, 94, 0.2)'
+                                }}>
+                                    ACTIVO
+                                </span>
+                            )}
+                        </div>
+                        {subscription?.end_date && (
+                            <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                Renueva el: {new Date(subscription.end_date).toLocaleDateString()}
+                            </p>
+                        )}
+                    </div>
+
+                    {subscription?.status !== 'active' && (
+                        <a
+                            href="/pricing"
+                            style={{
+                                padding: '0.75rem 1.5rem',
+                                borderRadius: 'var(--radius-md)',
+                                backgroundColor: 'var(--accent-primary)',
+                                color: 'white',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                display: 'inline-block'
+                            }}
+                        >
+                            Actualizar a PRO
+                        </a>
+                    )}
                 </div>
             </div>
 

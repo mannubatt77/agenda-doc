@@ -1,9 +1,9 @@
 "use client";
 
 import { useData, Student, Grade } from "@/context/DataContext";
-import { useState, use, useMemo } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { ArrowLeft, UserPlus, Check, Plus, Trash2, Calendar as CalIcon, Calculator, ClipboardList, PenLine, Printer, History, RotateCw } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AttendanceSection } from "./AttendanceSection";
 import { GradeStatsCharts } from "@/components/GradeStatsCharts";
 import { PreviasSection } from "./PreviasSection";
@@ -20,9 +20,12 @@ interface AssignmentColumn {
     type: 'exam' | 'tp' | 'informe';
 }
 
-export default function CourseDashboardPage({ params }: { params: Promise<{ courseId: string }> }) {
-    const { courseId } = use(params);
+function CourseDashboardContent() {
+    const searchParams = useSearchParams();
+    const courseId = searchParams.get('id');
     const router = useRouter();
+
+    if (!courseId) return <div>Error: Curso no especificado</div>;
     const [activeTab, setActiveTab] = useState<'dashboard' | 'students' | 'attendance' | 'grades' | 'calendar' | 'homework' | 'sanctions' | 'topic-log' | 'previas' | 'intensification'>('dashboard');
 
     const {
@@ -1232,5 +1235,14 @@ export default function CourseDashboardPage({ params }: { params: Promise<{ cour
 
             </div>
         </div>
+    );
+}
+
+
+export default function CourseDashboardPage() {
+    return (
+        <Suspense fallback={<div>Cargando...</div>}>
+            <CourseDashboardContent />
+        </Suspense>
     );
 }

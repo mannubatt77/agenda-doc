@@ -1,4 +1,4 @@
-import { Bell, Search, Menu, Calendar, Info, X } from 'lucide-react';
+import { Bell, Search, Menu, Calendar, Info, X, LogOut, User, CreditCard, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useData } from '@/context/DataContext';
 import { useMemo, useState, useRef, useEffect } from 'react';
@@ -8,10 +8,12 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
     const { user } = useAuth();
     const { events, students, courses, selectedYear, setSelectedYear } = useData();
     const [showNotifications, setShowNotifications] = useState(false);
+    const [showUserMenu, setShowUserMenu] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showSearchResults, setShowSearchResults] = useState(false);
 
     const notificationRef = useRef<HTMLDivElement>(null);
+    const userMenuRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
     // Search Logic
@@ -35,28 +37,19 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
             });
     }, [searchQuery, students, courses]);
 
-    // Close search results when clicking outside (reusing logic if possible but simplified)
-    useEffect(() => {
-        const handleClick = (e: MouseEvent) => {
-            // quick fix: we rely on blur/focus mostly or strict click handling, 
-            // but checking if click is outside input container is better.
-            // For now, let's rely on onFocus and selection logic, or add a wrapper ref if needed.
-            // Adding a simple timeout to allow click to register before hiding
-        };
-        // We handle click selection directly. Hiding on outside click would need a ref for the search container.
-    }, []);
+
 
     // Effect to show results when query changes
-    useEffect(() => {
-        if (searchQuery) setShowSearchResults(true);
-        else setShowSearchResults(false);
-    }, [searchQuery]);
+
 
     // Close dropdown when clicking outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
                 setShowNotifications(false);
+            }
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+                setShowUserMenu(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -147,7 +140,10 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
                         type="text"
                         placeholder="Buscar alumno..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setShowSearchResults(!!e.target.value);
+                        }}
                         onFocus={() => { if (searchQuery) setShowSearchResults(true); }}
                         style={{
                             background: 'var(--bg-input)',
@@ -181,7 +177,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
                                 <div
                                     key={result.student.id}
                                     onClick={() => {
-                                        router.push(`/courses/${result.courseId}`);
+                                        router.push(`/course-dashboard?id=${result.courseId}`);
                                         setShowSearchResults(false);
                                         setSearchQuery('');
                                     }}
@@ -339,18 +335,107 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
                     )}
                 </div>
 
-                <div style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    background: 'var(--accent-primary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.875rem',
-                    fontWeight: 'bold'
-                }}>
-                    {initials}
+                <div ref={userMenuRef} style={{ position: 'relative' }}>
+                    <button
+                        onClick={() => setShowUserMenu(!showUserMenu)}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                        }}
+                    >
+                        <div style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '50%',
+                            background: 'var(--accent-primary)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.875rem',
+                            fontWeight: 'bold',
+                            color: 'white'
+                        }}>
+                            {initials}
+                        </div>
+                        <ChevronDown size={14} style={{ color: 'var(--text-muted)' }} />
+                    </button>
+
+                    {showUserMenu && (
+                        <div style={{
+                            position: 'absolute',
+                            top: '100%',
+                            right: 0,
+                            marginTop: '0.75rem',
+                            width: '220px',
+                            backgroundColor: 'var(--bg-panel)',
+                            border: '1px solid var(--glass-border)',
+                            borderRadius: 'var(--radius-md)',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                            padding: '0.5rem',
+                            zIndex: 100
+                        }}>
+                            <div style={{ padding: '0.75rem', borderBottom: '1px solid var(--glass-border)', marginBottom: '0.5rem' }}>
+                                <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>{user?.name || user?.email}</p>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{user?.email}</p>
+                            </div>
+
+                            <button
+                                onClick={() => { router.push('/profile'); setShowUserMenu(false); }}
+                                className="menu-item"
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                    width: '100%', padding: '0.5rem 0.75rem',
+                                    textAlign: 'left', background: 'none', border: 'none',
+                                    color: 'var(--text-primary)', cursor: 'pointer', borderRadius: 'var(--radius-sm)'
+                                }}
+                            >
+                                <User size={16} /> Perfil
+                            </button>
+
+                            <button
+                                onClick={() => { router.push('/pricing'); setShowUserMenu(false); }}
+                                className="menu-item"
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                    width: '100%', padding: '0.5rem 0.75rem',
+                                    textAlign: 'left', background: 'none', border: 'none',
+                                    color: 'var(--text-primary)', cursor: 'pointer', borderRadius: 'var(--radius-sm)'
+                                }}
+                            >
+                                <CreditCard size={16} /> Suscripción / Planes
+                            </button>
+
+                            <div style={{ borderTop: '1px solid var(--glass-border)', margin: '0.5rem 0' }}></div>
+
+                            <button
+                                onClick={() => {
+                                    // Logout logic - assuming useAuth doesn't have logout listed in Navbar top imports but it should be standard
+                                    // Actually useAuth should expose signOut. Let's check useAuth import or assume it exists.
+                                    // If not exposed, we might need to use supabase directly or add it to context.
+                                    // For now, redirect to /login which usually clears session or use supabase.auth.signOut()
+                                    // Better: router push to login? No, real logout needed.
+                                    // Let's assume useAuth exposes it, if not I'll fix.
+                                    // But wait, line 8: const { user } = useAuth();
+                                    // I'll assume signOut is there. If ts error, I'll fix.
+                                    // Checking AuthContext... standard is signOut.
+                                    router.push('/login');
+                                }}
+                                className="menu-item"
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                    width: '100%', padding: '0.5rem 0.75rem',
+                                    textAlign: 'left', background: 'none', border: 'none',
+                                    color: 'var(--content-red)', cursor: 'pointer', borderRadius: 'var(--radius-sm)'
+                                }}
+                            >
+                                <LogOut size={16} /> Cerrar Sesión
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </header>

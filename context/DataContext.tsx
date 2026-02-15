@@ -142,6 +142,16 @@ export interface PendingGrade {
     grade: number | null;
 }
 
+export interface Subscription {
+    id: string;
+    user_id: string;
+    status: 'active' | 'trial' | 'expired' | 'cancelled';
+    plan_type: 'yearly' | 'monthly';
+    start_date: string;
+    end_date?: string;
+    created_at: string;
+}
+
 interface DataContextType {
     schools: School[];
     courses: Course[];
@@ -219,6 +229,8 @@ interface DataContextType {
     selectedYear: number;
     setSelectedYear: (year: number) => void;
     createAcademicYear: (targetYear: number) => Promise<void>;
+
+    subscription: Subscription | null;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -246,6 +258,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
     // --- INTENSIFICATION ---
     const [intensificationInstances, setIntensificationInstances] = useState<IntensificationInstance[]>([]);
     const [intensificationResults, setIntensificationResults] = useState<IntensificationResult[]>([]);
+
+    const [subscription, setSubscription] = useState<Subscription | null>(null);
 
     // Fetch Initial Data
     useEffect(() => {
@@ -341,11 +355,27 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
             const { data: ir } = await supabase.from('intensification_results').select('*');
             if (ir) setIntensificationResults(ir);
+
+            // Fetch Subscription
+            const { data: sub } = await supabase.from('subscriptions').select('*').limit(1).single();
+            if (sub) {
+                setSubscription(sub as unknown as Subscription);
+            } else {
+                // Determine if we should create a trial automatically?
+                // For now, let's assume if no record exists, they are in "trial" mode implicitly or we create one.
+                // Or better: the frontend handles "no subscription" as "trial" or "expired".
+                // Let's create a default Trial subscription if none exists to track start date.
+                const { data: newSub } = await supabase.from('subscriptions').insert({
+                    user_id: user.id,
+                    status: 'trial',
+                    plan_type: 'monthly'
+                }).select().single();
+                if (newSub) setSubscription(newSub as unknown as Subscription);
+            }
         };
 
         fetchData();
 
-        // Setup Realtime if ambitious, but let's stick to Fetch.
     }, [user, selectedYear]);
 
     // --- ACTIONS ---
@@ -398,9 +428,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const getSchoolCourses = (schoolId: string) => courses.filter(c => c.school_id === schoolId);
 
     const addStudent = async (courseId: string, data: { name: string, surname: string, condition: Student['condition'] }) => {
+        // Enforce specific limits for Free/Trial plan
+        if (subscription?.status !== 'active') {
+            // Assuming 'trial' is our default free tier as per current logic
+            if (students.length >= 50) {
+                alert("Has alcanzado el límite de 50 alumnos. Actualiza tu plan a PRO para alumnos ilimitados.");
+                return;
+            }
+        }
+
         const { data: s } = await supabase.from('students').insert({
             course_id: courseId,
-            ...data
+            ...data,
+
         }).select().single();
         if (s) setStudents(prev => [...prev, s]);
     };
@@ -649,7 +689,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
             intensificationInstances, getIntensificationInstances, addIntensificationInstance, deleteIntensificationInstance,
             intensificationResults, addIntensificationResult,
 
-            selectedYear, setSelectedYear, createAcademicYear
+            selectedYear, setSelectedYear, createAcademicYear,
+
+            subscription
         }}>
             {children}
         </DataContext.Provider>

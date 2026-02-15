@@ -281,7 +281,7 @@ export default function SchoolsPage() {
 
                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
                                 <Link
-                                    href={`/schools/${school.id}`}
+                                    href={`/school-details?id=${school.id}`}
                                     style={{
                                         flex: 1,
                                         display: 'flex',

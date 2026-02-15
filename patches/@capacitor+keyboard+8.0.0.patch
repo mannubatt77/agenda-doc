@@ -1,0 +1,337 @@
+diff --git a/node_modules/@capacitor/keyboard/android/build.gradle b/node_modules/@capacitor/keyboard/android/build.gradle
+index c08e920..e164503 100644
+--- a/node_modules/@capacitor/keyboard/android/build.gradle
++++ b/node_modules/@capacitor/keyboard/android/build.gradle
+@@ -42,7 +42,7 @@ android {
+     buildTypes {
+         release {
+             minifyEnabled false
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+         }
+     }
+     lintOptions {
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/results.bin b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/results.bin
+new file mode 100644
+index 0000000..7ed749e
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/results.bin
+@@ -0,0 +1 @@
++o/bundleLibRuntimeToDirDebug
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard$1.dex b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard$1.dex
+new file mode 100644
+index 0000000..659ecfc
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard$1.dex differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.dex b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.dex
+new file mode 100644
+index 0000000..0d92772
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.dex differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard.dex b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard.dex
+new file mode 100644
+index 0000000..67ad026
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/Keyboard.dex differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/KeyboardPlugin.dex b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/KeyboardPlugin.dex
+new file mode 100644
+index 0000000..b5c3be3
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/capacitorjs/plugins/keyboard/KeyboardPlugin.dex differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/Keyboard$$InternalSyntheticLambda$5$c482ddabbf2412486ddd494dfa70387aa628f50ac39d5f67c672b8ce6e99309f$0.globals b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/Keyboard$$InternalSyntheticLambda$5$c482ddabbf2412486ddd494dfa70387aa628f50ac39d5f67c672b8ce6e99309f$0.globals
+new file mode 100644
+index 0000000..5ef09a0
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/Keyboard$$InternalSyntheticLambda$5$c482ddabbf2412486ddd494dfa70387aa628f50ac39d5f67c672b8ce6e99309f$0.globals differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$15b6c372bbabcd9ba3de5781c5fd9b2e9423530de3414dbc27bee2616818d660$0.globals b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$15b6c372bbabcd9ba3de5781c5fd9b2e9423530de3414dbc27bee2616818d660$0.globals
+new file mode 100644
+index 0000000..5ef09a0
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$15b6c372bbabcd9ba3de5781c5fd9b2e9423530de3414dbc27bee2616818d660$0.globals differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$4cf718370379982e48e2f5ff0e7d51d97b631bb3ef8377cf282a498eb7163d76$0.globals b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$4cf718370379982e48e2f5ff0e7d51d97b631bb3ef8377cf282a498eb7163d76$0.globals
+new file mode 100644
+index 0000000..5ef09a0
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$4cf718370379982e48e2f5ff0e7d51d97b631bb3ef8377cf282a498eb7163d76$0.globals differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$922c621d2ef65017673632611a9ecdad2ac9336fdb623d23fad9ca9efa899b7d$0.globals b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$922c621d2ef65017673632611a9ecdad2ac9336fdb623d23fad9ca9efa899b7d$0.globals
+new file mode 100644
+index 0000000..5ef09a0
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$922c621d2ef65017673632611a9ecdad2ac9336fdb623d23fad9ca9efa899b7d$0.globals differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$b3fa4c3c7e01092560e1f71597b42eeff8363150804fb70dd4b387006708e19e$0.globals b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$b3fa4c3c7e01092560e1f71597b42eeff8363150804fb70dd4b387006708e19e$0.globals
+new file mode 100644
+index 0000000..5ef09a0
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$b3fa4c3c7e01092560e1f71597b42eeff8363150804fb70dd4b387006708e19e$0.globals differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$c2b68143a740b2a34e1fe1b4c946f30ef9cb766f759181f9e996dc38c60ee7e7$0.globals b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$c2b68143a740b2a34e1fe1b4c946f30ef9cb766f759181f9e996dc38c60ee7e7$0.globals
+new file mode 100644
+index 0000000..5ef09a0
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_global-synthetics/com/capacitorjs/plugins/keyboard/KeyboardPlugin$$InternalSyntheticLambda$2$c2b68143a740b2a34e1fe1b4c946f30ef9cb766f759181f9e996dc38c60ee7e7$0.globals differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin
+new file mode 100644
+index 0000000..ef85916
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/164445107683b35cc489fbc645f517e0/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/results.bin b/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/transformed/classes/classes_dex/classes.dex b/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/transformed/classes/classes_dex/classes.dex
+new file mode 100644
+index 0000000..fc2b84d
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/transformed/classes/classes_dex/classes.dex differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/transformed/classes/classes_global-synthetics/global.globals b/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/transformed/classes/classes_global-synthetics/global.globals
+new file mode 100644
+index 0000000..602d655
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/7e78c2031b4f857177f787f5df05084c/transformed/classes/classes_global-synthetics/global.globals differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/results.bin b/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/transformed/classes/classes_dex/classes.dex b/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/transformed/classes/classes_dex/classes.dex
+new file mode 100644
+index 0000000..ce5b73d
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/transformed/classes/classes_dex/classes.dex differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/transformed/classes/classes_global-synthetics/global.globals b/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/transformed/classes/classes_global-synthetics/global.globals
+new file mode 100644
+index 0000000..5ef09a0
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/.transforms/a4e13a0b7fe6eabe5b72fdd528cf4a97/transformed/classes/classes_global-synthetics/global.globals differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/@capacitor/keyboard/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..aba2748
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.capacitorjs.plugins.keyboard" >
++
++    <uses-sdk android:minSdkVersion="23" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/@capacitor/keyboard/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..70c2691
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.capacitorjs.plugins.keyboard",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/aar_main_jar/debug/syncDebugLibJars/classes.jar b/node_modules/@capacitor/keyboard/android/build/intermediates/aar_main_jar/debug/syncDebugLibJars/classes.jar
+new file mode 100644
+index 0000000..31beeeb
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/aar_main_jar/debug/syncDebugLibJars/classes.jar differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/@capacitor/keyboard/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..5c6f284
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=35
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json b/node_modules/@capacitor/keyboard/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/annotations_typedef_file/debug/extractDebugAnnotations/typedefs.txt b/node_modules/@capacitor/keyboard/android/build/intermediates/annotations_typedef_file/debug/extractDebugAnnotations/typedefs.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar b/node_modules/@capacitor/keyboard/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar
+new file mode 100644
+index 0000000..d12c829
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/@capacitor/keyboard/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar
+new file mode 100644
+index 0000000..4eda157
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt b/node_modules/@capacitor/keyboard/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug-mergeJavaRes/merge-state b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug-mergeJavaRes/merge-state
+new file mode 100644
+index 0000000..1c983fc
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug-mergeJavaRes/merge-state differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..d9a009f
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Sun Feb 15 00:16:45 UTC 2026
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..003f739
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/build/generated/res/resValues/debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/mergeDebugAssets/merger.xml b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+new file mode 100644
+index 0000000..6d2d4e5
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/assets"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/debug/assets"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+new file mode 100644
+index 0000000..76bf0ca
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/debug/jniLibs"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard$1.class b/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard$1.class
+new file mode 100644
+index 0000000..30a9c75
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard$1.class differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.class b/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.class
+new file mode 100644
+index 0000000..cbec998
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.class differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard.class b/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard.class
+new file mode 100644
+index 0000000..3ef3df8
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/Keyboard.class differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/KeyboardPlugin.class b/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/KeyboardPlugin.class
+new file mode 100644
+index 0000000..1b1ef86
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/capacitorjs/plugins/keyboard/KeyboardPlugin.class differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt b/node_modules/@capacitor/keyboard/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+@@ -0,0 +1,2 @@
++R_DEF: Internal format may change without notice
++local
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/@capacitor/keyboard/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..00c0ad2
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,7 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.capacitorjs.plugins.keyboard" >
++4
++5    <uses-sdk android:minSdkVersion="23" />
++6
++7</manifest>
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/merged_java_res/debug/mergeDebugJavaResource/feature-capacitor-keyboard.jar b/node_modules/@capacitor/keyboard/android/build/intermediates/merged_java_res/debug/mergeDebugJavaResource/feature-capacitor-keyboard.jar
+new file mode 100644
+index 0000000..15cb0ec
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/merged_java_res/debug/mergeDebugJavaResource/feature-capacitor-keyboard.jar differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/@capacitor/keyboard/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..aba2748
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.capacitorjs.plugins.keyboard" >
++
++    <uses-sdk android:minSdkVersion="23" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/@capacitor/keyboard/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/@capacitor/keyboard/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard$1.class b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard$1.class
+new file mode 100644
+index 0000000..30a9c75
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard$1.class differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.class b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.class
+new file mode 100644
+index 0000000..cbec998
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard$KeyboardEventListener.class differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard.class b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard.class
+new file mode 100644
+index 0000000..3ef3df8
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/Keyboard.class differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/KeyboardPlugin.class b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/KeyboardPlugin.class
+new file mode 100644
+index 0000000..1b1ef86
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/capacitorjs/plugins/keyboard/KeyboardPlugin.class differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar
+new file mode 100644
+index 0000000..d0b2cc7
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt b/node_modules/@capacitor/keyboard/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..2bef0d1
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+@@ -0,0 +1 @@
++com.capacitorjs.plugins.keyboard
+diff --git a/node_modules/@capacitor/keyboard/android/build/outputs/aar/capacitor-keyboard-debug.aar b/node_modules/@capacitor/keyboard/android/build/outputs/aar/capacitor-keyboard-debug.aar
+new file mode 100644
+index 0000000..0f9fcaa
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/outputs/aar/capacitor-keyboard-debug.aar differ
+diff --git a/node_modules/@capacitor/keyboard/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/@capacitor/keyboard/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..7f45abf
+--- /dev/null
++++ b/node_modules/@capacitor/keyboard/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,16 @@
++-- Merging decision tree log ---
++manifest
++ADDED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml:1:1-2:12
++INJECTED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml:1:1-2:12
++	package
++		INJECTED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml
++	xmlns:android
++		ADDED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml:1:11-69
++uses-sdk
++INJECTED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml
++INJECTED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from /home/manubatt/Documentos/PROGRAMACION/docx/node_modules/@capacitor/keyboard/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/@capacitor/keyboard/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/@capacitor/keyboard/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
+new file mode 100644
+index 0000000..254e553
+Binary files /dev/null and b/node_modules/@capacitor/keyboard/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ

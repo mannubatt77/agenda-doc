@@ -1,0 +1,235 @@
+-- Enable RLS on all tables
+ALTER TABLE schools ENABLE ROW LEVEL SECURITY;
+ALTER TABLE courses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE attendance ENABLE ROW LEVEL SECURITY;
+ALTER TABLE grades ENABLE ROW LEVEL SECURITY;
+ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE homeworks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE homework_status ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sanctions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE topic_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pending_students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pending_exams ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pending_grades ENABLE ROW LEVEL SECURITY;
+ALTER TABLE intensification_instances ENABLE ROW LEVEL SECURITY;
+ALTER TABLE intensification_results ENABLE ROW LEVEL SECURITY;
+
+-- 1. SCHOOLS (Base table)
+CREATE POLICY "Users can manage their own schools" ON schools
+    USING (user_id = auth.uid())
+    WITH CHECK (user_id = auth.uid());
+
+-- 2. COURSES (Linked to Schools)
+CREATE POLICY "Users can manage courses of their schools" ON courses
+    USING (EXISTS (
+        SELECT 1 FROM schools 
+        WHERE schools.id = courses.school_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM schools 
+        WHERE schools.id = courses.school_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 3. STUDENTS (Linked to Courses)
+CREATE POLICY "Users can manage students of their courses" ON students
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = students.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = students.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 4. ATTENDANCE (Linked to Courses)
+CREATE POLICY "Users can manage attendance" ON attendance
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = attendance.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = attendance.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 5. GRADES
+CREATE POLICY "Users can manage grades" ON grades
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = grades.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = grades.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 6. EVENTS
+CREATE POLICY "Users can manage events" ON events
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = events.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = events.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 7. HOMEWORKS
+CREATE POLICY "Users can manage homeworks" ON homeworks
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = homeworks.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = homeworks.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 8. HOMEWORK STATUS (Linked to Homework)
+CREATE POLICY "Users can manage homework status" ON homework_status
+    USING (EXISTS (
+        SELECT 1 FROM homeworks
+        JOIN courses ON courses.id = homeworks.course_id
+        JOIN schools ON schools.id = courses.school_id
+        WHERE homeworks.id = homework_status.homework_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM homeworks
+        JOIN courses ON courses.id = homeworks.course_id
+        JOIN schools ON schools.id = courses.school_id
+        WHERE homeworks.id = homework_status.homework_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 9. SANCTIONS
+CREATE POLICY "Users can manage sanctions" ON sanctions
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = sanctions.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = sanctions.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 10. TOPIC LOGS
+CREATE POLICY "Users can manage topic logs" ON topic_logs
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = topic_logs.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = topic_logs.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 11. PENDING STUDENTS
+CREATE POLICY "Users can manage pending students" ON pending_students
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = pending_students.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = pending_students.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 12. PENDING EXAMS
+CREATE POLICY "Users can manage pending exams" ON pending_exams
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = pending_exams.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = pending_exams.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 13. PENDING GRADES (Linked to Pending Exams)
+CREATE POLICY "Users can manage pending grades" ON pending_grades
+    USING (EXISTS (
+        SELECT 1 FROM pending_exams
+        JOIN courses ON courses.id = pending_exams.course_id
+        JOIN schools ON schools.id = courses.school_id
+        WHERE pending_exams.id = pending_grades.exam_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM pending_exams
+        JOIN courses ON courses.id = pending_exams.course_id
+        JOIN schools ON schools.id = courses.school_id
+        WHERE pending_exams.id = pending_grades.exam_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 14. INTENSIFICATION INSTANCES
+CREATE POLICY "Users can manage intensification instances" ON intensification_instances
+    USING (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = intensification_instances.course_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM courses 
+        JOIN schools ON schools.id = courses.school_id
+        WHERE courses.id = intensification_instances.course_id 
+        AND schools.user_id = auth.uid()
+    ));
+
+-- 15. INTENSIFICATION RESULTS (Linked to Instances)
+CREATE POLICY "Users can manage intensification results" ON intensification_results
+    USING (EXISTS (
+        SELECT 1 FROM intensification_instances
+        JOIN courses ON courses.id = intensification_instances.course_id
+        JOIN schools ON schools.id = courses.school_id
+        WHERE intensification_instances.id = intensification_results.instance_id 
+        AND schools.user_id = auth.uid()
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM intensification_instances
+        JOIN courses ON courses.id = intensification_instances.course_id
+        JOIN schools ON schools.id = courses.school_id
+        WHERE intensification_instances.id = intensification_results.instance_id 
+        AND schools.user_id = auth.uid()
+    ));

@@ -1,15 +1,21 @@
 "use client";
 
 import { useData, Course } from "@/context/DataContext";
-import { useState, use } from "react";
+import { useState, Suspense } from "react";
 import { Plus, ArrowLeft, Trash2, ArrowRight, Edit } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SchoolDetailsPage({ params }: { params: Promise<{ schoolId: string }> }) {
-    const { schoolId } = use(params);
+function SchoolDetailsContent() {
+    const searchParams = useSearchParams();
+    const schoolId = searchParams.get('id');
     const router = useRouter();
     const { schools, getSchoolCourses, addCourse, updateCourse, deleteCourse, deleteSchool } = useData();
+
+    // Handle missing ID
+    if (!schoolId) {
+        return <div>Error: No se especificó la escuela.</div>;
+    }
 
     const school = schools.find(s => s.id === schoolId);
     const courses = getSchoolCourses(schoolId);
@@ -175,8 +181,11 @@ export default function SchoolDetailsPage({ params }: { params: Promise<{ school
                         </div>
 
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                            {/* Update Link to use query param for course? No, courses details still need refactor. 
+                                For now, link to /courses/ID (which we will refactor next) or /course-details?id=ID 
+                             */}
                             <Link
-                                href={`/courses/${course.id}`}
+                                href={`/course-dashboard?id=${course.id}`}
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -202,5 +211,13 @@ export default function SchoolDetailsPage({ params }: { params: Promise<{ school
                 ))}
             </div>
         </div>
+    );
+}
+
+export default function SchoolDetailsPage() {
+    return (
+        <Suspense fallback={<div style={{ padding: '2rem' }}>Cargando...</div>}>
+            <SchoolDetailsContent />
+        </Suspense>
     );
 }
