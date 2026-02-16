@@ -26,6 +26,18 @@ export default function PricingPage() {
                 body: JSON.stringify({ planType: plan })
             });
 
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API Error:", response.status, errorText);
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    alert("Error del servidor: " + (errorJson.error || errorText));
+                } catch {
+                    alert("Error del servidor (" + response.status + "): " + errorText.substring(0, 100));
+                }
+                return;
+            }
+
             const data = await response.json();
 
             if (data.url) {
@@ -33,9 +45,9 @@ export default function PricingPage() {
             } else {
                 alert("Error al iniciar el pago: " + (data.error || "Desconocido"));
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert("Error de conexión al procesar el pago.");
+            alert(`Error al procesar el pago: ${error.message || 'Error desconocido'}`);
         }
     };
 

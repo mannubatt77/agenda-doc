@@ -16,17 +16,22 @@ import { createClient } from '@supabase/supabase-js';
 
 export async function POST(req: NextRequest) {
     try {
+        if (!process.env.MP_ACCESS_TOKEN) {
+            console.error("MP_ACCESS_TOKEN is missing in environment variables");
+            return NextResponse.json({ error: 'Error de configuración: Falta MP_ACCESS_TOKEN' }, { status: 500 });
+        }
+
         // 1. Validate User
         const authHeader = req.headers.get('Authorization');
         if (!authHeader) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
         }
 
         const token = authHeader.replace('Bearer ', '');
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
         if (authError || !user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
         }
 
         // 2. Get Plan Details
@@ -38,7 +43,7 @@ export async function POST(req: NextRequest) {
         let unit_price = 1;
 
         if (planType !== 'yearly') {
-            return NextResponse.json({ error: 'Invalid plan type' }, { status: 400 });
+            return NextResponse.json({ error: 'Tipo de plan inválido' }, { status: 400 });
         }
 
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -76,13 +81,13 @@ export async function POST(req: NextRequest) {
         const result = await preference.create(preferenceData);
 
         if (!result.init_point) {
-            throw new Error('No init_point returned from MercadoPago');
+            throw new Error('MercadoPago no devolvió un punto de inicio (init_point)');
         }
 
         return NextResponse.json({ url: result.init_point });
 
     } catch (error: any) {
         console.error('Error creating preference:', error);
-        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: error.message || 'Error interno del servidor' }, { status: 500 });
     }
 }
