@@ -40,6 +40,19 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Error de configuración: Falta SUPABASE_SERVICE_ROLE_KEY en Vercel' }, { status: 500 });
         }
 
+        try {
+            // Validate that we are using the SERVICE_ROLE key, not the ANON key
+            const [, payloadBase64] = supabaseKey.split('.');
+            const payloadJson = Buffer.from(payloadBase64, 'base64').toString();
+            const payload = JSON.parse(payloadJson);
+            if (payload.role !== 'service_role') {
+                return NextResponse.json({ error: 'Error de configuración: La clave SUPABASE_SERVICE_ROLE_KEY ingresada no es válida (parece ser Anon/Public). Revisa Vercel.' }, { status: 500 });
+            }
+        } catch (e) {
+            console.error('Error validation key:', e);
+            return NextResponse.json({ error: 'Error de configuración: Clave SUPABASE_SERVICE_ROLE_KEY inválida' }, { status: 500 });
+        }
+
         const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
         const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
