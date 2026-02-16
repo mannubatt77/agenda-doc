@@ -15,6 +15,8 @@ import { createClient } from '@supabase/supabase-js';
 // For now, I'll assume standard Bearer token validation or just trusting the session if passed (but that's insecure).
 // Better: Use `supabase.auth.getUser()` with the token from the header.
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
     try {
         if (!process.env.MP_ACCESS_TOKEN) {
@@ -25,7 +27,7 @@ export async function POST(req: NextRequest) {
         // 1. Validate User
         const authHeader = req.headers.get('Authorization');
         if (!authHeader) {
-            return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+            return NextResponse.json({ error: 'No autorizado (Falta Header)' }, { status: 401 });
         }
 
         const token = authHeader.replace('Bearer ', '');
@@ -53,12 +55,25 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Error de configuración: Clave SUPABASE_SERVICE_ROLE_KEY inválida' }, { status: 500 });
         }
 
-        const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
+        const supabaseAdmin = createClient(supabaseUrl, supabaseKey, {
+            auth: {
+                autoRefreshToken: false,
+                persistSession: false
+            }
+        });
 
-        const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+        let user;
+        try {
+            const { data, error: authError } = await supabaseAdmin.auth.getUser(token);
+            if (authError) throw authError;
+            user = data.user;
+        } catch (authErr: any) {
+            console.error("Auth Check Failed:", authErr);
+            return NextResponse.json({ error: `Fallo de Autenticación (vDebug): ${authErr.message}` }, { status: 401 });
+        }
 
-        if (authError || !user) {
-            return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+        if (!user) {
+            return NextResponse.json({ error: 'No autorizado (Usuario no encontrado)' }, { status: 401 });
         }
 
         // 2. Get Plan Details
