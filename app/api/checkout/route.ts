@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { preference } from '@/lib/mercadopago';
 import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 
 
 // We need a server-side Supabase client to verify the session securely
@@ -28,7 +29,15 @@ export async function POST(req: NextRequest) {
         }
 
         const token = authHeader.replace('Bearer ', '');
-        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+        // Create a dedicated client for auth verification to avoid RLS issues
+        // Use Service Role Key if available (Bypass RLS), otherwise Anon Key
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+        const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
+
+        const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
         if (authError || !user) {
             return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
