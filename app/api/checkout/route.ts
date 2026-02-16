@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { preference } from '@/lib/mercadopago';
 import { supabase } from '@/lib/supabase';
-import { createClient } from '@supabase/supabase-js';
+
 
 // We need a server-side Supabase client to verify the session securely
 // However, for this step, we'll trust the auth header verification or use a service role if needed to update DB, 
@@ -38,9 +38,8 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { planType } = body;
 
-        let title = 'Suscripción Anual - DocX (Prueba)';
-        let price = 1;
-        let unit_price = 1;
+        const title = 'Suscripción Anual - DocX (Prueba)';
+        const unit_price = 1;
 
         if (planType !== 'yearly') {
             return NextResponse.json({ error: 'Tipo de plan inválido' }, { status: 400 });
