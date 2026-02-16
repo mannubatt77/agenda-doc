@@ -33,7 +33,12 @@ export async function POST(req: NextRequest) {
         // Create a dedicated client for auth verification to avoid RLS issues
         // Use Service Role Key if available (Bypass RLS), otherwise Anon Key
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+        if (!supabaseKey) {
+            console.error('SUPABASE_SERVICE_ROLE_KEY missing');
+            return NextResponse.json({ error: 'Error de configuración: Falta SUPABASE_SERVICE_ROLE_KEY en Vercel' }, { status: 500 });
+        }
 
         const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
