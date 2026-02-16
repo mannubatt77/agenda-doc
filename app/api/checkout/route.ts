@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { preference } from '@/lib/mercadopago';
-import { supabase } from '@/lib/supabase';
+// import { supabase } from '@/lib/supabase';
 import { createClient } from '@supabase/supabase-js';
 
 
