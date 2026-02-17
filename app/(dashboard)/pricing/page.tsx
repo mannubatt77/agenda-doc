@@ -17,7 +17,7 @@ export default function PricingPage() {
                 return;
             }
 
-            const response = await fetch('/api/checkout', {
+            const response = await fetch('/api/checkout-new', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
