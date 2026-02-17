@@ -53,7 +53,7 @@ export default function PricingPage() {
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
-            <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Planes y Precios</h1>
+            <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Planes y Precios (v2.3)</h1>
             <p className="mb-8" style={{ color: 'var(--text-secondary)' }}>Elige el plan que mejor se adapte a tus necesidades.</p>
 
             <div className="grid md:grid-cols-2 gap-8">
