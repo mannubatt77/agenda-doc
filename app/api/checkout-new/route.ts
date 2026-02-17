@@ -50,6 +50,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'No autorizado (Usuario no encontrado)' }, { status: 401 });
         }
 
+        return NextResponse.json({ error: 'DEBUG: AUTENTICACIÓN EXITOSA. USUARIO: ' + user.email });
+
         // 3. Create Preference
         const body = await req.json();
         const { planType } = body;
