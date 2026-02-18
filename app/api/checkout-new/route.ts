@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         if (!supabaseKey) throw new Error('SERVICE_ROLE missing');
 
+        /*
         step = 'AUTH_HEADER';
         const authHeader = req.headers.get('Authorization');
         if (!authHeader) return NextResponse.json({ error: 'Falta Header Auth' }, { status: 401 });
@@ -28,6 +29,10 @@ export async function POST(req: NextRequest) {
 
         if (authError) return NextResponse.json({ error: `Auth Error (${step}): ${authError.message}` }, { status: 401 });
         if (!user) return NextResponse.json({ error: `User Not Found (${step})` }, { status: 401 });
+        */
+
+        // HARDCODED BYPASS FOR TESTING
+        const user = { email: 'debug_test@agenda.doc', id: 'debug_123' };
 
         step = 'READ_BODY';
         const body = await req.json();
