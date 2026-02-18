@@ -60,20 +60,26 @@ export async function POST(req: NextRequest) {
             }
         };
 
-        step = 'CALL_MP_CREATE';
-        // Wrap MP call specifically to catch its errors
-        let result;
-        try {
-            result = await preference.create(preferenceData);
-        } catch (mpError: any) {
-            console.error('MP CREATE ERROR:', mpError);
-            // Check if it's a specific object
-            const msg = mpError?.message || JSON.stringify(mpError);
-            throw new Error(`MercadoPago Failed: ${msg}`);
+        step = 'CALL_MP_CREATE_RAW';
+        // USE RAW FETCH TO BYPASS LIBRARY WEIRDNESS
+        const mpResponse = await fetch('https://api.mercadopago.com/checkout/preferences', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(preferenceData.body)
+        });
+
+        if (!mpResponse.ok) {
+            const errorText = await mpResponse.text();
+            throw new Error(`MP API Error (${mpResponse.status}): ${errorText}`);
         }
 
+        const result = await mpResponse.json();
+
         step = 'CHECK_RESULT';
-        if (!result?.init_point) throw new Error('No init_point returned');
+        if (!result?.init_point) throw new Error('No init_point returned from raw fetch');
 
         return NextResponse.json({ url: result.init_point });
 
