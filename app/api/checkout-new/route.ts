@@ -61,6 +61,17 @@ export async function POST(req: NextRequest) {
         };
 
         step = 'CALL_MP_CREATE_RAW';
+        console.log('DEBUG: MP Token prefix:', process.env.MP_ACCESS_TOKEN?.substring(0, 10));
+        console.log('DEBUG: User Email:', user.email);
+
+        // CHECK INTERNET CONNECTIVITY
+        try {
+            const google = await fetch('https://www.google.com', { method: 'HEAD' });
+            console.log('DEBUG: Google Reachable:', google.status);
+        } catch (e: any) {
+            console.error('DEBUG: Google Unreachable:', e.message);
+        }
+
         // USE RAW FETCH TO BYPASS LIBRARY WEIRDNESS
         const mpResponse = await fetch('https://api.mercadopago.com/checkout/preferences', {
             method: 'POST',
@@ -70,6 +81,10 @@ export async function POST(req: NextRequest) {
             },
             body: JSON.stringify(preferenceData.body)
         });
+
+        // HEADERS INSPECTION
+        console.log('DEBUG: MP Response Headers:', Object.fromEntries(mpResponse.headers.entries()));
+
 
         if (!mpResponse.ok) {
             const errorText = await mpResponse.text();
