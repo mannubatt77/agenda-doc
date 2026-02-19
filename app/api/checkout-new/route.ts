@@ -13,7 +13,6 @@ export async function POST(req: NextRequest) {
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         if (!supabaseKey) throw new Error('SERVICE_ROLE missing');
 
-        /*
         step = 'AUTH_HEADER';
         const authHeader = req.headers.get('Authorization');
         if (!authHeader) return NextResponse.json({ error: 'Falta Header Auth' }, { status: 401 });
@@ -29,10 +28,6 @@ export async function POST(req: NextRequest) {
 
         if (authError) return NextResponse.json({ error: `Auth Error (${step}): ${authError.message}` }, { status: 401 });
         if (!user) return NextResponse.json({ error: `User Not Found (${step})` }, { status: 401 });
-        */
-
-        // HARDCODED BYPASS FOR TESTING
-        const user = { email: 'debug_test@agenda.doc', id: 'debug_123' };
 
         step = 'READ_BODY';
         const body = await req.json();
@@ -61,17 +56,6 @@ export async function POST(req: NextRequest) {
         };
 
         step = 'CALL_MP_CREATE_RAW';
-        console.log('DEBUG: MP Token prefix:', process.env.MP_ACCESS_TOKEN?.substring(0, 10));
-        console.log('DEBUG: User Email:', user.email);
-
-        // CHECK INTERNET CONNECTIVITY
-        try {
-            const google = await fetch('https://www.google.com', { method: 'HEAD' });
-            console.log('DEBUG: Google Reachable:', google.status);
-        } catch (e: any) {
-            console.error('DEBUG: Google Unreachable:', e.message);
-        }
-
         // USE RAW FETCH TO BYPASS LIBRARY WEIRDNESS
         const mpResponse = await fetch('https://api.mercadopago.com/checkout/preferences', {
             method: 'POST',
@@ -81,10 +65,6 @@ export async function POST(req: NextRequest) {
             },
             body: JSON.stringify(preferenceData.body)
         });
-
-        // HEADERS INSPECTION
-        console.log('DEBUG: MP Response Headers:', Object.fromEntries(mpResponse.headers.entries()));
-
 
         if (!mpResponse.ok) {
             const errorText = await mpResponse.text();
