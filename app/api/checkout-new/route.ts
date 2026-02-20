@@ -33,15 +33,26 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { planType } = body;
 
+        let title = 'Suscripción DocX';
+        let price = 20000; // Default Yearly
+
+        if (planType === 'monthly') {
+            title = 'Suscripción Mensual - DocX';
+            price = 2000; // Placeholder for monthly if implemented later
+        } else {
+            title = 'Suscripción Anual - DocX';
+            price = 20000;
+        }
+
         step = 'PREPARE_MP';
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
         const preferenceData = {
             body: {
                 items: [{
-                    id: 'plan-yearly',
-                    title: 'Suscripción DocX (Prueba)',
+                    id: `plan-${planType}`,
+                    title: title,
                     quantity: 1,
-                    unit_price: 1,
+                    unit_price: price,
                     currency_id: 'ARS',
                 }],
                 payer: { email: user.email },
