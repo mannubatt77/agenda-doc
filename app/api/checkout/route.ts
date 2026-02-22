@@ -102,9 +102,9 @@ export async function POST(req: NextRequest) {
                 ],
                 // Only send payer info in production. In localhost/sandbox, let MP handle it 
                 // to avoid "Seller buying from Seller" or "Verification Code" issues with dummy emails.
-                payer: appUrl.includes('localhost') ? undefined : {
-                    email: user.email,
-                },
+                // payer: appUrl.includes('localhost') ? undefined : {
+                //     email: user.email,
+                // },
                 back_urls: {
                     success: `${appUrl}/success`,
                     failure: `${appUrl}/pricing?status=failure`,
