@@ -281,90 +281,104 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
             // 1. Schools
             let query = supabase.from('schools').select('*').eq('user_id', user.id);
-            // Ideally filter by year if column exists. 
-            // We'll rely on client side filtering temporarily if migration isn't run, 
-            // but the SQL query is safer if the column exists.
             query = query.eq('academic_year', selectedYear);
 
             const { data: s, error: schoolsError } = await query;
             if (schoolsError) {
-                // formatting error likely means column doesn't exist yet
                 console.warn("Error fetching schools (possibly missing academic_year column):", schoolsError);
             }
-            if (s) setSchools(s);
+            const userSchools = s || [];
+            if (userSchools) setSchools(userSchools);
 
-            // For other tables, if we had strict RLS for 'owner', we might need to join keys.
-            // But if we use the simple "Show all for now" RLS from the script, we can select *.
-            // Ideally, we should filter by relations. 
-            // BUT, Supabase JS allows relational queries. 
-            // To keep it simple, we'll fetch ALL rows where we can.
-            // Wait, if "Enable all for users" is ON, we see everyone's data. 
-            // We need to filter.
-            // Since we only have one user (the dev) it's fine.
-            // PROPER WAY: 
-            // Schools -> Filter by user.id
-            // Courses -> Filter by school_id IN (schools.ids)
-            // ...
+            if (userSchools.length === 0) {
+                // If the user has no schools, they have no other data.
+                setCourses([]); setStudents([]); setAttendance([]); setGrades([]);
+                setEvents([]); setHomeworks([]); setHomeworkRecords([]); setSanctions([]);
+                setTopicLogs([]); setPendingStudents([]); setPendingExams([]); setPendingGrades([]);
+                setIntensificationInstances([]); setIntensificationResults([]);
+            } else {
+                const schoolIds = userSchools.map(sch => sch.id);
 
-            // For this phase, let's fetch ALL and filter in memory if needed, 
-            // OR assume the user is the only one. 
-            // We'll trust the RLS or just fetch everything for simplicity in V1 migration.
-            // Optimization: We can chain or do it properly later.
+                // For this phase, we explicitly filter by school_id to double-enforce security
+                // and fix any RLS caching problems where data leaks across accounts.
 
-            const { data: c } = await supabase.from('courses').select('*');
-            if (c) setCourses(c);
+                const { data: c } = await supabase.from('courses').select('*').in('school_id', schoolIds);
+                const userCourses = c || [];
+                if (c) setCourses(userCourses);
 
-            const { data: st } = await supabase.from('students').select('*');
-            if (st) setStudents(st);
+                if (userCourses.length > 0) {
+                    const courseIds = userCourses.map(course => course.id);
 
-            const { data: a } = await supabase.from('attendance').select('*');
-            if (a) setAttendance(a);
+                    const { data: st } = await supabase.from('students').select('*').in('course_id', courseIds);
+                    if (st) setStudents(st);
 
-            const { data: g } = await supabase.from('grades').select('*');
-            if (g) setGrades(g);
+                    const { data: a } = await supabase.from('attendance').select('*').in('course_id', courseIds);
+                    if (a) setAttendance(a);
 
-            const { data: e } = await supabase.from('events').select('*');
-            if (e) setEvents(e);
+                    const { data: g } = await supabase.from('grades').select('*').in('course_id', courseIds);
+                    if (g) setGrades(g);
 
-            const { data: hw } = await supabase.from('homeworks').select('*');
-            if (hw) setHomeworks(hw);
+                    const { data: e } = await supabase.from('events').select('*').in('course_id', courseIds);
+                    if (e) setEvents(e);
 
-            const { data: topics } = await supabase.from('topic_logs').select('*');
-            if (topics) setTopicLogs(topics);
+                    const { data: hw } = await supabase.from('homeworks').select('*').in('course_id', courseIds);
+                    const userHomeworks = hw || [];
+                    if (hw) setHomeworks(userHomeworks);
 
-            const { data: pStudents } = await supabase.from('pending_students').select('*');
-            if (pStudents) setPendingStudents(pStudents);
+                    if (userHomeworks.length > 0) {
+                        const homeworkIds = userHomeworks.map(h => h.id);
+                        const { data: hwr } = await supabase.from('homework_status').select('*').in('homework_id', homeworkIds);
+                        if (hwr) setHomeworkRecords(hwr as unknown as HomeworkRecord[]);
+                    } else {
+                        setHomeworkRecords([]);
+                    }
 
-            const { data: pExams } = await supabase.from('pending_exams').select('*');
-            if (pExams) setPendingExams(pExams);
+                    const { data: topics } = await supabase.from('topic_logs').select('*').in('course_id', courseIds);
+                    if (topics) setTopicLogs(topics);
 
-            const { data: pGrades } = await supabase.from('pending_grades').select('*');
-            if (pGrades) setPendingGrades(pGrades);
+                    const { data: pStudents } = await supabase.from('pending_students').select('*').in('course_id', courseIds);
+                    if (pStudents) setPendingStudents(pStudents);
 
-            const { data: hwr } = await supabase.from('homework_status').select('*');
-            if (hwr) setHomeworkRecords(hwr as unknown as HomeworkRecord[]); // map DB name if different? naming matched schema.
+                    const { data: pExams } = await supabase.from('pending_exams').select('*').in('course_id', courseIds);
+                    const userPendingExams = pExams || [];
+                    if (pExams) setPendingExams(userPendingExams);
 
-            const { data: sa } = await supabase.from('sanctions').select('*');
-            if (sa) setSanctions(sa);
+                    if (userPendingExams.length > 0) {
+                        const examIds = userPendingExams.map(pe => pe.id);
+                        const { data: pGrades } = await supabase.from('pending_grades').select('*').in('exam_id', examIds);
+                        if (pGrades) setPendingGrades(pGrades);
+                    } else {
+                        setPendingGrades([]);
+                    }
 
-            const { data: tl } = await supabase.from('topic_logs').select('*');
-            if (tl) setTopicLogs(tl);
+                    const { data: sa } = await supabase.from('sanctions').select('*').in('course_id', courseIds);
+                    if (sa) setSanctions(sa);
 
-            const { data: ii } = await supabase.from('intensification_instances').select('*');
-            if (ii) setIntensificationInstances(ii);
+                    const { data: ii } = await supabase.from('intensification_instances').select('*').in('course_id', courseIds);
+                    const userInstances = ii || [];
+                    if (ii) setIntensificationInstances(userInstances);
 
-            const { data: ir } = await supabase.from('intensification_results').select('*');
-            if (ir) setIntensificationResults(ir);
+                    if (userInstances.length > 0) {
+                        const instanceIds = userInstances.map(inst => inst.id);
+                        const { data: ir } = await supabase.from('intensification_results').select('*').in('instance_id', instanceIds);
+                        if (ir) setIntensificationResults(ir);
+                    } else {
+                        setIntensificationResults([]);
+                    }
+
+                } else {
+                    setStudents([]); setAttendance([]); setGrades([]);
+                    setEvents([]); setHomeworks([]); setHomeworkRecords([]); setSanctions([]);
+                    setTopicLogs([]); setPendingStudents([]); setPendingExams([]); setPendingGrades([]);
+                    setIntensificationInstances([]); setIntensificationResults([]);
+                }
+            }
 
             // Fetch Subscription
             const { data: sub } = await supabase.from('subscriptions').select('*').limit(1).single();
             if (sub) {
                 setSubscription(sub as unknown as Subscription);
             } else {
-                // Determine if we should create a trial automatically?
-                // For now, let's assume if no record exists, they are in "trial" mode implicitly or we create one.
-                // Or better: the frontend handles "no subscription" as "trial" or "expired".
-                // Let's create a default Trial subscription if none exists to track start date.
                 const { data: newSub } = await supabase.from('subscriptions').insert({
                     user_id: user.id,
                     status: 'trial',

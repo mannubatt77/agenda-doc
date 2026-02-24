@@ -88,7 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             options: {
                 data: {
                     name: name
-                }
+                },
+                emailRedirectTo: `${window.location.origin}/login`
             }
         });
 
