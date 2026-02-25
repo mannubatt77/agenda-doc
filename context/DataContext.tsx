@@ -231,6 +231,8 @@ interface DataContextType {
     createAcademicYear: (targetYear: number) => Promise<void>;
 
     subscription: Subscription | null;
+
+    getPeriodFromDate: (dateStr: string, schoolId: string) => 1 | 2 | 3;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -691,11 +693,51 @@ export function DataProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const getPeriodFromDate = (dateStr: string, schoolId: string): 1 | 2 | 3 => {
+        const school = schools.find(s => s.id === schoolId);
+        if (!school) return 1;
+
+        const targetTime = new Date(dateStr).getTime();
+
+        const parseDate = (d?: string | null) => d ? new Date(d).getTime() : null;
+
+        const t1s = parseDate(school.term1_start);
+        const t1e = parseDate(school.term1_end);
+        const t2s = parseDate(school.term2_start);
+        const t2e = parseDate(school.term2_end);
+
+        if (school.term_structure === 'tri') {
+            const t3s = parseDate(school.term3_start);
+            const t3e = parseDate(school.term3_end);
+
+            // Period 1 ranges conceptually until term 1 ends OR before term 2 starts
+            if (t1e && targetTime <= t1e) return 1;
+            if (t2s && targetTime < t2s) return 1; // Between t1 and t2 goes to t1
+
+            // Period 2
+            if (t2e && targetTime <= t2e) return 2;
+            if (t3s && targetTime < t3s) return 2;
+
+            // Period 3
+            if (t2e && targetTime > t2e) return 3;
+
+            return 1;
+        } else {
+            // Bi-monthly
+            if (t1e && targetTime <= t1e) return 1;
+            if (t2s && targetTime < t2s) return 1;
+
+            if (t1e && targetTime > t1e) return 2;
+            return 1;
+        }
+    };
+
     return (
         <DataContext.Provider value={{
             schools, courses, students, attendance, grades, events, homeworks, homeworkRecords, sanctions, topicLogs,
             addSchool, updateSchool, deleteSchool,
             addCourse, updateCourse, deleteCourse, getSchoolCourses,
+            getPeriodFromDate,
             addStudent, deleteStudent, getCourseStudents,
             markAttendance, getAttendance,
             addGrade, updateGrade, deleteGrade, getStudentGrades,

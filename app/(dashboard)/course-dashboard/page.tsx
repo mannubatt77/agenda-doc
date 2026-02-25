@@ -36,7 +36,8 @@ function CourseDashboardContent() {
         getCourseEvents, addEvent, deleteEvent,
         homeworks: allHomeworks, addHomework, deleteHomework, toggleHomeworkStatus, getHomeworkStatus,
         sanctions: allSanctions, addSanction, deleteSanction, getCourseSanctions,
-        topicLogs: allTopicLogs, addTopicLog, deleteTopicLog, getCourseTopicLogs
+        topicLogs: allTopicLogs, addTopicLog, deleteTopicLog, getCourseTopicLogs,
+        getPeriodFromDate
     } = useData();
 
     const course = courses.find(c => c.id === courseId);
@@ -65,7 +66,7 @@ function CourseDashboardContent() {
             addHomework(courseId, {
                 description: newHomeworkDesc,
                 date: newHomeworkDate,
-                period: newHomeworkPeriod
+                period: getPeriodFromDate(newHomeworkDate, course?.school_id || "")
             });
             setIsAddHomeworkOpen(false);
             setNewHomeworkDesc("");
@@ -125,7 +126,6 @@ function CourseDashboardContent() {
     // --- Homework State ---
     const [newHomeworkDate, setNewHomeworkDate] = useState(new Date().toISOString().split('T')[0]);
     const [newHomeworkDesc, setNewHomeworkDesc] = useState("");
-    const [newHomeworkPeriod, setNewHomeworkPeriod] = useState<1 | 2 | 3>(1);
     const [isAddHomeworkOpen, setIsAddHomeworkOpen] = useState(false);
 
     // --- Grades Refactor State ---
@@ -143,7 +143,6 @@ function CourseDashboardContent() {
     const [addAssignmentOpen, setAddAssignmentOpen] = useState(false);
     const [newAssignmentDesc, setNewAssignmentDesc] = useState("");
     const [newAssignmentDate, setNewAssignmentDate] = useState(new Date().toISOString().split('T')[0]);
-    const [newAssignmentPeriod, setNewAssignmentPeriod] = useState<1 | 2 | 3>(1);
     const [newAssignmentType, setNewAssignmentType] = useState<'exam' | 'tp' | 'informe'>('exam');
 
     // Edit Column State
@@ -389,7 +388,7 @@ function CourseDashboardContent() {
             addGrade(courseId, activeStudents[0].id, {
                 description: newAssignmentDesc,
                 date: newAssignmentDate,
-                period: newAssignmentPeriod,
+                period: getPeriodFromDate(newAssignmentDate, course?.school_id || ""),
                 type: newAssignmentType,
                 value: 0
             });
@@ -667,11 +666,9 @@ function CourseDashboardContent() {
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '0.75rem' }}>Cuatrimestre</label>
-                                    <select value={newAssignmentPeriod} onChange={e => setNewAssignmentPeriod(Number(e.target.value) as 1 | 2 | 3)} style={{ display: 'block', padding: '0.5rem', borderRadius: '4px', border: 'none', backgroundColor: 'var(--bg-input)', color: 'white' }}>
-                                        <option value={1}>1° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'}</option>
-                                        <option value={2}>2° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'}</option>
-                                        {school?.term_structure === 'tri' && <option value={3}>3° Trimestre</option>}
-                                    </select>
+                                    <div style={{ padding: '0.5rem', borderRadius: '4px', backgroundColor: 'var(--bg-input)', color: 'var(--accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', height: '36px' }}>
+                                        {getPeriodFromDate(newAssignmentDate, course?.school_id || "")}° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'} (Automático)
+                                    </div>
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '0.75rem' }}>Tipo</label>
@@ -856,11 +853,9 @@ function CourseDashboardContent() {
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '0.75rem' }}>Cuatrimestre</label>
-                                    <select value={newHomeworkPeriod} onChange={e => setNewHomeworkPeriod(Number(e.target.value) as 1 | 2 | 3)} style={{ display: 'block', padding: '0.5rem', borderRadius: '4px', border: 'none', backgroundColor: 'var(--bg-input)', color: 'white' }}>
-                                        <option value={1}>1° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'}</option>
-                                        <option value={2}>2° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'}</option>
-                                        {school?.term_structure === 'tri' && <option value={3}>3° Trimestre</option>}
-                                    </select>
+                                    <div style={{ padding: '0.5rem', borderRadius: '4px', backgroundColor: 'var(--bg-input)', color: 'var(--accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', height: '36px' }}>
+                                        {getPeriodFromDate(newHomeworkDate, course?.school_id || "")}° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'} (Automático)
+                                    </div>
                                 </div>
                                 <button onClick={handleAddHomework} style={{ padding: '0.5rem 1rem', backgroundColor: 'var(--accent-primary)', borderRadius: '4px' }}>Guardar Tarea</button>
                                 <button onClick={() => setIsAddHomeworkOpen(false)} style={{ padding: '0.5rem', backgroundColor: 'transparent', border: '1px solid var(--glass-border)', borderRadius: '4px' }}>Cancelar</button>
