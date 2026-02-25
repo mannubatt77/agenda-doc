@@ -396,15 +396,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     const addSchool = async (name: string, dates?: { t1s: string, t1e: string, t2s: string, t2e: string, t3s?: string, t3e?: string }, termStructure: 'bi' | 'tri' = 'bi') => {
         if (!user) return;
+
+        const sanitizeDate = (dateStr?: string) => (dateStr && dateStr.trim() !== '') ? dateStr : null;
+
         const { data, error } = await supabase.from('schools').insert({
             name,
             user_id: user.id,
-            term1_start: dates?.t1s,
-            term1_end: dates?.t1e,
-            term2_start: dates?.t2s,
-            term2_end: dates?.t2e,
-            term3_start: dates?.t3s,
-            term3_end: dates?.t3e,
+            term1_start: sanitizeDate(dates?.t1s),
+            term1_end: sanitizeDate(dates?.t1e),
+            term2_start: sanitizeDate(dates?.t2s),
+            term2_end: sanitizeDate(dates?.t2e),
+            term3_start: sanitizeDate(dates?.t3s),
+            term3_end: sanitizeDate(dates?.t3e),
             term_structure: termStructure,
             academic_year: selectedYear
         }).select().single();
