@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from "recharts";
+import { Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from "recharts";
 import { Grade, Student } from "@/context/DataContext";
 
 interface GradeStatsChartsProps {
@@ -61,14 +61,24 @@ export function GradeStatsCharts({ students, grades, termStructure = 'bi' }: Gra
     const hasDataT2 = stats.term2.some(d => d.value > 0);
     const hasDataT3 = stats.term3.some(d => d.value > 0);
 
-    const renderPie = (data: any[], title: string, hasData: boolean) => (
+    const renderPie = (data: { name: string, value: number, color: string }[], title: string, hasData: boolean) => (
         <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)' }}>
             <h3 style={{ marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'center' }}>{title}</h3>
             <div style={{ width: '100%', height: '220px' }}>
                 {hasData ? (
                     <ResponsiveContainer>
                         <PieChart>
-                            <Pie data={data} cx="50%" cy="50%" innerRadius={50} outerRadius={70} paddingAngle={5} dataKey="value">
+                            <Pie
+                                data={data}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={40}
+                                outerRadius={70}
+                                paddingAngle={5}
+                                dataKey="value"
+                                label={(props: { value?: number, percent?: number }) => `${props.value || 0} (${((props.percent || 0) * 100).toFixed(0)}%)`}
+                                labelLine={true}
+                            >
                                 {data.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                             </Pie>
                             <Tooltip contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--glass-border)', borderRadius: '8px' }} itemStyle={{ color: 'white' }} />

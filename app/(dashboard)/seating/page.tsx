@@ -17,9 +17,9 @@ export default function SeatingPage() {
     const [seatingState, setSeatingState] = useState<Record<string, string>>({});
     const [selectedStudentToAssign, setSelectedStudentToAssign] = useState<string | null>(null);
 
-    // Grid Dimensions: 5 Rows x 6 Columns for a robust classroom (30 desks)
-    const columns = 6;
-    const rows = 5;
+    // Grid Dimensions
+    const [columns, setColumns] = useState(6);
+    const [rows, setRows] = useState(5);
 
     // Initial load handled via select onChange.
 
@@ -108,12 +108,30 @@ export default function SeatingPage() {
                     </select>
 
                     {selectedCourseId && (
-                        <button
-                            onClick={handleClearAll}
-                            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 'var(--radius-md)', marginLeft: 'auto' }}
-                        >
-                            <Trash2 size={16} /> Vaciar Aula
-                        </button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto' }}>
+                            <label style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Columnas:</label>
+                            <input
+                                type="number"
+                                min="2" max="15"
+                                value={columns}
+                                onChange={(e) => setColumns(Number(e.target.value) || 6)}
+                                style={{ width: '60px', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-input)', color: 'white', textAlign: 'center' }}
+                            />
+                            <label style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginLeft: '0.5rem' }}>Filas:</label>
+                            <input
+                                type="number"
+                                min="2" max="15"
+                                value={rows}
+                                onChange={(e) => setRows(Number(e.target.value) || 5)}
+                                style={{ width: '60px', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-input)', color: 'white', textAlign: 'center' }}
+                            />
+                            <button
+                                onClick={handleClearAll}
+                                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 'var(--radius-md)', marginLeft: '1rem' }}
+                            >
+                                <Trash2 size={16} /> Vaciar Aula
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

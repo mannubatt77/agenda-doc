@@ -3,6 +3,7 @@
 import { useData } from "@/context/DataContext";
 import { useState } from "react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend, LineChart, Line, CartesianGrid } from "recharts";
+import { Printer } from "lucide-react";
 import { GradeStatsCharts } from "@/components/GradeStatsCharts";
 
 export default function AnalyticsPage() {
@@ -63,11 +64,24 @@ export default function AnalyticsPage() {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div className="selection-header">
-                <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>Estadísticas del Curso</h1>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Seleccione el establecimiento y la materia para visualizar sus analíticas.</p>
+            <div className="selection-header" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                    <div>
+                        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>Estadísticas del Curso</h1>
+                        <p style={{ color: 'var(--text-secondary)' }}>Seleccione el establecimiento y la materia para visualizar sus analíticas.</p>
+                    </div>
+                    {activeCourse && (
+                        <button
+                            onClick={() => window.print()}
+                            className="print-hide"
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', backgroundColor: 'var(--bg-panel)', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 600, border: '1px solid var(--glass-border)', cursor: 'pointer' }}
+                        >
+                            <Printer size={18} /> Imprimir PDF
+                        </button>
+                    )}
+                </div>
 
-                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', backgroundColor: 'var(--bg-panel)', padding: '1rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)' }}>
+                <div className="print-hide" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', backgroundColor: 'var(--bg-panel)', padding: '1rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)' }}>
                     <select
                         value={selectedSchoolId}
                         onChange={(e) => { setSelectedSchoolId(e.target.value); setSelectedCourseId(""); }}
@@ -139,7 +153,17 @@ export default function AnalyticsPage() {
                                 {hasHwData ? (
                                     <ResponsiveContainer>
                                         <PieChart>
-                                            <Pie data={hwData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value">
+                                            <Pie
+                                                data={hwData}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={60}
+                                                outerRadius={90}
+                                                paddingAngle={5}
+                                                dataKey="value"
+                                                label={(props: { value?: number, percent?: number }) => `${props.value || 0} (${((props.percent || 0) * 100).toFixed(0)}%)`}
+                                                labelLine={true}
+                                            >
                                                 {hwData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                                             </Pie>
                                             <Tooltip contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--glass-border)', borderRadius: '8px' }} itemStyle={{ color: 'white' }} />

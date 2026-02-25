@@ -5,12 +5,13 @@ import { useState } from "react";
 import { Shuffle, Users as UsersIcon } from "lucide-react";
 
 export default function GroupsPage() {
-    const { schools, courses, students } = useData();
+    const { schools, courses, students, grades } = useData();
 
     const [selectedSchoolId, setSelectedSchoolId] = useState("");
     const [selectedCourseId, setSelectedCourseId] = useState("");
 
     const [groupSize, setGroupSize] = useState<number>(4);
+    const [groupType, setGroupType] = useState<'random' | 'performance'>('random');
     const [generatedGroups, setGeneratedGroups] = useState<Student[][]>([]);
 
     const filteredCourses = courses.filter(c => c.school_id === selectedSchoolId);
@@ -19,14 +20,41 @@ export default function GroupsPage() {
     const handleGenerateGroups = () => {
         if (courseStudents.length === 0) return;
 
-        // Shuffle students array (Fisher-Yates)
-        const shuffled = [...courseStudents];
+        let targetStudents = [...courseStudents];
+
+        if (groupType === 'performance') {
+            const studentAvgs = targetStudents.map(student => {
+                const sGrades = grades.filter(g => g.student_id === student.id && g.course_id === selectedCourseId && g.value !== null);
+                const avg = sGrades.length ? sGrades.reduce((a, b) => a + (b.value as number), 0) / sGrades.length : 0;
+                return { student, avg };
+            });
+
+            // Descending sort (best grades first)
+            studentAvgs.sort((a, b) => b.avg - a.avg);
+            targetStudents = studentAvgs.map(sa => sa.student);
+
+            const groups: Student[][] = [];
+            for (let i = 0; i < targetStudents.length; i += groupSize) {
+                // Take a tier of students
+                const chunk = targetStudents.slice(i, i + groupSize);
+                // Shuffle within the performance tier so groups aren't strictly ordered alphabetically or perfectly 1-2-3-4
+                for (let j = chunk.length - 1; j > 0; j--) {
+                    const k = Math.floor(Math.random() * (j + 1));
+                    [chunk[j], chunk[k]] = [chunk[k], chunk[j]];
+                }
+                groups.push(chunk);
+            }
+            setGeneratedGroups(groups);
+            return;
+        }
+
+        // Random logic
+        const shuffled = [...targetStudents];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
 
-        // Chunk them into groups
         const groups: Student[][] = [];
         for (let i = 0; i < shuffled.length; i += groupSize) {
             groups.push(shuffled.slice(i, i + groupSize));
@@ -63,6 +91,16 @@ export default function GroupsPage() {
                         {filteredCourses.map(c => (
                             <option key={c.id} value={c.id}>{c.name} ({c.year}° {c.division}°)</option>
                         ))}
+                    </select>
+
+                    <select
+                        value={groupType}
+                        onChange={(e) => { setGroupType(e.target.value as 'random' | 'performance'); setGeneratedGroups([]); }}
+                        disabled={!selectedCourseId}
+                        style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-input)', color: 'white', minWidth: '150px', opacity: !selectedCourseId ? 0.5 : 1 }}
+                    >
+                        <option value="random">Aleatorio</option>
+                        <option value="performance">Por Rendimiento</option>
                     </select>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto', opacity: !selectedCourseId ? 0.5 : 1 }}>

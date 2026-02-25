@@ -523,7 +523,7 @@ function CourseDashboardContent() {
         if (!course) return;
         const termConfig = school?.term_structure || 'bi';
 
-        let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // BOM for Excel UTF-8
+        let csvContent = "\uFEFF"; // BOM for Excel UTF-8
 
         // Headers
         const headers = ["Alumno", "Asistencia (%)", "Tareas (%)", "1° Cuat.", "2° Cuat."];
@@ -566,10 +566,14 @@ function CourseDashboardContent() {
             csvContent += row.join(",") + "\n";
         });
 
-        const encodedUri = encodeURI(csvContent);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute("href", url);
         link.setAttribute("download", `Planilla_${course.name}_${course.year}${course.division}.csv`);
+        link.style.visibility = 'hidden';
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
