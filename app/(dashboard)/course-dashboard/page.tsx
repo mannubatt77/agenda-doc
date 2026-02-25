@@ -1,8 +1,8 @@
 "use client";
 
 import { useData, Student, Grade } from "@/context/DataContext";
-import { useState, useMemo, Suspense } from "react";
-import { ArrowLeft, UserPlus, Check, Plus, Trash2, Calendar as CalIcon, Calculator, ClipboardList, PenLine, Printer, History, RotateCw } from "lucide-react";
+import { useState, useMemo, Suspense, useEffect } from "react";
+import { ArrowLeft, UserPlus, FileText, Check, Calculator, Clock, Calendar as CalIcon, Trash2, Edit2, Download, Search, Plus, Printer, LayoutDashboard, Settings, LogOut, CheckSquare, XSquare, MinusSquare, AlertCircle, BookOpen, PenLine, FileSignature, AlertTriangle, RotateCw, History, ClipboardList } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AttendanceSection } from "./AttendanceSection";
 import { GradeStatsCharts } from "@/components/GradeStatsCharts";
@@ -20,13 +20,36 @@ interface AssignmentColumn {
     type: 'exam' | 'tp' | 'informe';
 }
 
+function FinalGradeInput({ studentId, period, initialValue, existingId, onChange }: { studentId: string, period: 1 | 2 | 3, initialValue: string | number, existingId?: string, onChange: (sid: string, p: 1 | 2 | 3, val: string, eid?: string) => void }) {
+    const [val, setVal] = useState(initialValue);
+
+    useEffect(() => {
+        setVal(initialValue);
+    }, [initialValue]);
+
+    return (
+        <input
+            type="number"
+            min="1" max="10"
+            value={val}
+            onChange={(e) => setVal(e.target.value)}
+            onBlur={(e) => {
+                if (String(val) !== String(initialValue)) {
+                    onChange(studentId, period, String(val), existingId);
+                }
+            }}
+            style={{ width: '45px', textAlign: 'center', backgroundColor: 'transparent', border: 'none', color: 'white', fontWeight: 'bold' }}
+        />
+    );
+}
+
 function CourseDashboardContent() {
     const searchParams = useSearchParams();
     const courseId = searchParams.get('id');
     const router = useRouter();
 
     if (!courseId) return <div>Error: Curso no especificado</div>;
-    const [activeTab, setActiveTab] = useState<'dashboard' | 'students' | 'attendance' | 'grades' | 'calendar' | 'homework' | 'sanctions' | 'topic-log' | 'previas' | 'intensification'>('dashboard');
+    const [activeTab, setActiveTab] = useState<'dashboard' | 'students' | 'attendance' | 'grades' | 'homework' | 'sanctions' | 'topic-log' | 'previas' | 'intensification' | 'calendar' | 'boletin'>('dashboard');
 
     const {
         courses, schools,
@@ -37,7 +60,7 @@ function CourseDashboardContent() {
         homeworks: allHomeworks, addHomework, deleteHomework, toggleHomeworkStatus, getHomeworkStatus,
         sanctions: allSanctions, addSanction, deleteSanction, getCourseSanctions,
         topicLogs: allTopicLogs, addTopicLog, deleteTopicLog, getCourseTopicLogs,
-        getPeriodFromDate
+        getPeriodFromDate, intensificationInstances, intensificationResults
     } = useData();
 
     const course = courses.find(c => c.id === courseId);
@@ -179,7 +202,7 @@ function CourseDashboardContent() {
     const assignmentColumns = useMemo(() => {
         const map = new Map<AssignmentKey, AssignmentColumn>();
 
-        courseGrades.forEach(g => {
+        courseGrades.filter(g => g.type !== 'final').forEach(g => {
             const key = `${g.period}|${g.date}|${g.description}`;
             if (!map.has(key)) {
                 map.set(key, {
@@ -436,7 +459,8 @@ function CourseDashboardContent() {
         const gradesToDelete = courseGrades.filter(g =>
             g.period === editingColumn.period &&
             g.date === editingColumn.date &&
-            g.description === editingColumn.description
+            g.description === editingColumn.description &&
+            g.type !== 'final'
         );
 
         gradesToDelete.forEach(g => deleteGrade(g.id));
@@ -505,6 +529,7 @@ function CourseDashboardContent() {
                         { id: 'homework', label: 'Tareas', icon: ClipboardList },
                         { id: 'sanctions', label: 'Sanciones', icon: Trash2 },
                         { id: 'topic-log', label: 'Libro de Temas', icon: PenLine },
+                        { id: 'boletin', label: 'Boletín', icon: FileText },
                         { id: 'previas', label: 'Previas', icon: History },
                         { id: 'intensification', label: 'Intensif.', icon: RotateCw },
                         { id: 'calendar', label: 'Calendario', icon: CalIcon },
@@ -1088,7 +1113,7 @@ function CourseDashboardContent() {
                                                         <td style={{ padding: '0.75rem', fontWeight: 600 }}>
                                                             {(() => {
                                                                 const st = students.find(stu => stu.id === s.student_id);
-                                                                return st ? `${st.surname}, ${st.name}` : 'Desconocido';
+                                                                return st ? `${st.surname}, ${st.name} ` : 'Desconocido';
                                                             })()}
                                                         </td>
                                                         <td style={{ padding: '0.75rem' }}>
@@ -1207,6 +1232,251 @@ function CourseDashboardContent() {
 
                 {activeTab === 'previas' && (
                     <PreviasSection courseId={courseId} />
+                )}
+
+                {/* ... (BOLETIN) ... */}
+                {activeTab === 'boletin' && (
+                    <div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+                            <button className="no-print" onClick={handlePrint} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', padding: '0.5rem 1rem', border: '1px solid var(--accent-primary)', borderRadius: 'var(--radius-md)', color: 'var(--accent-primary)' }}>
+                                <Printer size={18} /> Imprimir
+                            </button>
+                        </div>
+                        <div style={{ overflowX: 'auto', backgroundColor: 'var(--bg-panel)', borderRadius: 'var(--radius-lg)' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
+                                <thead>
+                                    <tr>
+                                        <th rowSpan={2} style={{ textAlign: 'left', padding: '1rem', borderRight: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-app)', position: 'sticky', left: 0, zIndex: 10 }}>Alumno</th>
+
+                                        <th colSpan={6} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
+                                            1° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'}
+                                        </th>
+
+                                        <th colSpan={6} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.1)' }}>
+                                            2° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'}
+                                        </th>
+
+                                        {school?.term_structure === 'tri' && (
+                                            <th colSpan={6} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.1)' }}>
+                                                3° Trimestre
+                                            </th>
+                                        )}
+                                        <th rowSpan={2} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>Promedio Final</th>
+                                    </tr>
+                                    <tr>
+                                        {/* T1 */}
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Notas</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Asist.</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Tareas</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Sanc.</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Intens.</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.2)' }}>FINAL</th>
+
+                                        {/* T2 */}
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Notas</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Asist.</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Tareas</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Sanc.</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Intens.</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.2)' }}>FINAL</th>
+
+                                        {/* T3 */}
+                                        {school?.term_structure === 'tri' && (
+                                            <>
+                                                <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Notas</th>
+                                                <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Asist.</th>
+                                                <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Tareas</th>
+                                                <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Sanc.</th>
+                                                <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Intens.</th>
+                                                <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.2)' }}>FINAL</th>
+                                            </>
+                                        )}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {activeStudents.map(student => {
+                                        const getTermStats = (studentId: string, period: 1 | 2 | 3) => {
+                                            const termGrades = courseGrades.filter(g => g.student_id === studentId && g.period === period && g.value !== null && g.type !== 'final');
+                                            let avg = '-';
+                                            if (termGrades.length > 0) {
+                                                avg = (termGrades.reduce((a, b) => a + (b.value || 0), 0) / termGrades.length).toFixed(1);
+                                            }
+
+                                            const allStudentAtt = allAttendance.filter(a => a.course_id === courseId && a.student_id === studentId);
+                                            const termAtt = allStudentAtt.filter(a => getPeriodFromDate(a.date, course?.school_id || "") === period);
+                                            let attPercentage = '-';
+                                            if (termAtt.length > 0) {
+                                                const presents = termAtt.filter(a => a.present).length;
+                                                attPercentage = Math.round((presents / termAtt.length) * 100) + '%';
+                                            }
+
+                                            const termHomeworks = courseHomeworks.filter(h => h.period === period);
+                                            let hwPercentage = '-';
+                                            if (termHomeworks.length > 0) {
+                                                const doneCount = termHomeworks.filter(h => getHomeworkStatus(h.id, studentId) === 'done').length;
+                                                hwPercentage = Math.round((doneCount / termHomeworks.length) * 100) + '%';
+                                            }
+
+                                            const termSanctions = courseSanctions.filter(s => s.student_id === studentId && getPeriodFromDate(s.date, course?.school_id || "") === period).length;
+
+                                            const failedExamsInTerm = courseGrades.filter(g => g.student_id === studentId && g.period === period && g.type === 'exam' && g.value !== null && g.value < 7);
+                                            let intensifStatus = '-';
+
+                                            if (failedExamsInTerm.length > 0) {
+                                                let allFailedCleared = true;
+                                                let anyFailedInstance = false;
+
+                                                for (const failedExam of failedExamsInTerm) {
+                                                    const instancesForExam = intensificationInstances.filter(inst =>
+                                                        inst.course_id === courseId &&
+                                                        inst.original_period === period &&
+                                                        inst.original_date === failedExam.date &&
+                                                        inst.original_description === failedExam.description
+                                                    );
+
+                                                    let clearedThisExam = false;
+                                                    let failedAnInstance = false;
+
+                                                    for (const inst of instancesForExam) {
+                                                        const res = intensificationResults.find(r => r.instance_id === inst.id && r.student_id === studentId);
+                                                        if (res) {
+                                                            if (res.is_approved) {
+                                                                clearedThisExam = true;
+                                                                break;
+                                                            } else {
+                                                                failedAnInstance = true;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (!clearedThisExam) {
+                                                        allFailedCleared = false;
+                                                        if (failedAnInstance) {
+                                                            anyFailedInstance = true;
+                                                        }
+                                                    }
+                                                }
+
+                                                if (allFailedCleared) {
+                                                    intensifStatus = 'AP';
+                                                } else if (anyFailedInstance) {
+                                                    intensifStatus = 'DES';
+                                                } else {
+                                                    intensifStatus = 'Pend.';
+                                                }
+                                            }
+
+                                            const finalGradeMatch = courseGrades.find(g => g.student_id === studentId && g.period === period && g.type === 'final');
+                                            const finalGrade = finalGradeMatch?.value || '';
+
+                                            return { avg, attPercentage, hwPercentage, sanctions: termSanctions || '-', intensifStatus, finalGrade, finalGradeId: finalGradeMatch?.id };
+                                        };
+                                        const handleFinalGradeChange = (studentId: string, period: 1 | 2 | 3, value: string, existingId?: string) => {
+                                            const numValue = value === '' ? null : Number(value);
+                                            if (existingId) {
+                                                if (numValue === null) {
+                                                    deleteGrade(existingId);
+                                                } else {
+                                                    updateGrade(existingId, { value: numValue });
+                                                }
+                                            } else if (numValue !== null) {
+                                                addGrade(courseId, studentId, {
+                                                    description: `Nota Final ${period}°`,
+                                                    date: new Date().toISOString().split('T')[0],
+                                                    period: period,
+                                                    type: 'final',
+                                                    value: numValue
+                                                });
+                                            }
+                                        };
+
+                                        const s1 = getTermStats(student.id, 1);
+                                        const s2 = getTermStats(student.id, 2);
+                                        const s3 = school?.term_structure === 'tri' ? getTermStats(student.id, 3) : null;
+
+                                        let finalAvg = '-';
+                                        const finalGrades = [];
+                                        if (s1.finalGrade !== '') finalGrades.push(Number(s1.finalGrade));
+                                        if (s2.finalGrade !== '') finalGrades.push(Number(s2.finalGrade));
+                                        if (s3 && s3.finalGrade !== '') finalGrades.push(Number(s3.finalGrade));
+
+                                        if (finalGrades.length > 0) {
+                                            finalAvg = (finalGrades.reduce((a, b) => a + b, 0) / finalGrades.length).toFixed(1);
+                                        }
+
+                                        return (
+                                            <tr key={student.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                                <td style={{ padding: '0.75rem 1rem', borderRight: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-panel)', position: 'sticky', left: 0, fontWeight: 500 }}>
+                                                    {student.surname}, {student.name}
+                                                </td>
+
+                                                {/* T1 */}
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s1.avg}</td>
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s1.attPercentage}</td>
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s1.hwPercentage}</td>
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s1.sanctions}</td>
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', fontWeight: 600, color: s1.intensifStatus === 'AP' ? 'var(--content-green)' : s1.intensifStatus === 'DES' ? 'var(--content-red)' : 'var(--text-muted)' }}>{s1.intensifStatus}</td>
+                                                <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.05)' }}>
+                                                    <FinalGradeInput
+                                                        studentId={student.id}
+                                                        period={1}
+                                                        initialValue={s1.finalGrade}
+                                                        existingId={s1.finalGradeId}
+                                                        onChange={handleFinalGradeChange}
+                                                    />
+                                                </td>
+
+                                                {/* T2 */}
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s2.avg}</td>
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s2.attPercentage}</td>
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s2.hwPercentage}</td>
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s2.sanctions}</td>
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', fontWeight: 600, color: s2.intensifStatus === 'AP' ? 'var(--content-green)' : s2.intensifStatus === 'DES' ? 'var(--content-red)' : 'var(--text-muted)' }}>{s2.intensifStatus}</td>
+                                                <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.05)' }}>
+                                                    <FinalGradeInput
+                                                        studentId={student.id}
+                                                        period={2}
+                                                        initialValue={s2.finalGrade}
+                                                        existingId={s2.finalGradeId}
+                                                        onChange={handleFinalGradeChange}
+                                                    />
+                                                </td>
+
+                                                {/* T3 */}
+                                                {school?.term_structure === 'tri' && s3 && (
+                                                    <>
+                                                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s3.avg}</td>
+                                                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s3.attPercentage}</td>
+                                                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s3.hwPercentage}</td>
+                                                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s3.sanctions}</td>
+                                                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', fontWeight: 600, color: s3.intensifStatus === 'AP' ? 'var(--content-green)' : s3.intensifStatus === 'DES' ? 'var(--content-red)' : 'var(--text-muted)' }}>{s3.intensifStatus}</td>
+                                                        <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.05)' }}>
+                                                            <FinalGradeInput
+                                                                studentId={student.id}
+                                                                period={3}
+                                                                initialValue={s3.finalGrade}
+                                                                existingId={s3.finalGradeId}
+                                                                onChange={handleFinalGradeChange}
+                                                            />
+                                                        </td>
+                                                    </>
+                                                )}
+
+                                                <td style={{ padding: '0.5rem', textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(255, 255, 255, 0.05)', color: finalAvg !== '-' && Number(finalAvg) >= 7 ? 'var(--content-green)' : finalAvg !== '-' && Number(finalAvg) < 7 ? 'var(--content-red)' : 'inherit' }}>
+                                                    {finalAvg}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                            {activeStudents.length === 0 && (
+                                <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                                    No hay alumnos en esta materia para mostrar el boletín.
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 )}
 
                 {/* ... (CALENDAR) ... */}
