@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Home, User, BookOpen, Calendar, LogOut, X } from 'lucide-react';
+import { Home, User, BookOpen, Calendar, LogOut, X, FileText } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface SidebarProps {
@@ -20,6 +20,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         { icon: User, label: 'Perfil', href: '/profile' },
         { icon: BookOpen, label: 'Escuelas y Materias', href: '/schools' },
         { icon: Calendar, label: 'Calendario', href: '/calendar' },
+        { icon: FileText, label: 'Inf. Trayectorias', href: '/informes' },
     ];
 
     return (
