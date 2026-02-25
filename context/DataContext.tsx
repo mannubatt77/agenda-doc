@@ -405,8 +405,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
             term2_end: dates?.t2e,
             term3_start: dates?.t3s,
             term3_end: dates?.t3e,
-            term_structure: termStructure
+            term_structure: termStructure,
+            academic_year: selectedYear
         }).select().single();
+
+        if (error) {
+            console.error("Error creating school:", error);
+            alert("Error al crear la escuela: " + error.message);
+        }
+
         if (data) setSchools(prev => [...prev, data]);
     };
 
