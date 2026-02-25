@@ -519,6 +519,62 @@ function CourseDashboardContent() {
         window.print();
     };
 
+    const handleExportCSV = () => {
+        if (!course) return;
+        const termConfig = school?.term_structure || 'bi';
+
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // BOM for Excel UTF-8
+
+        // Headers
+        const headers = ["Alumno", "Asistencia (%)", "Tareas (%)", "1° Cuat.", "2° Cuat."];
+        if (termConfig === 'tri') headers[4] = "2° Trim.";
+        if (termConfig === 'tri') headers.push("3° Trim.");
+        headers.push("Sanciones");
+
+        csvContent += headers.join(",") + "\n";
+
+        // Rows
+        students.forEach(student => {
+            const stats = getStats(student.id);
+
+            // Homework %
+            const studentHw = homeworkRecords.filter(r => r.student_id === student.id);
+            const totalHw = courseHomework.length;
+            const doneHw = studentHw.filter(r => r.status === 'done').length;
+            const hwPercent = totalHw > 0 ? Math.round((doneHw / totalHw) * 100) : '-';
+
+            // Attendance %
+            const sAtt = allAttendance.filter(a => a.student_id === student.id && a.course_id === courseId);
+            const totalAtt = sAtt.length;
+            const presentAtt = sAtt.filter(a => a.present).length;
+            const attPercent = totalAtt > 0 ? Math.round((presentAtt / totalAtt) * 100) : '-';
+
+            // Sanctions
+            const sSanctions = courseSanctions.filter(s => s.student_id === student.id).length;
+
+            const row = [
+                `"${student.surname}, ${student.name}"`,
+                attPercent,
+                hwPercent,
+                stats.avg1,
+                stats.avg2
+            ];
+
+            if (termConfig === 'tri') row.push(stats.avg3);
+            row.push(sSanctions);
+
+            csvContent += row.join(",") + "\n";
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Planilla_${course.name}_${course.year}${course.division}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
 
     // --- STATS (Legacy used for Students List) ---
     const getStats = (studentId: string) => {
@@ -565,7 +621,15 @@ function CourseDashboardContent() {
                 >
                     <ArrowLeft size={16} /> Volver
                 </button>
-                <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>{course.name} <span style={{ color: 'var(--text-muted)', fontSize: '1.25rem' }}>{course.year} "{course.division}"</span></h1>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>{course.name} <span style={{ color: 'var(--text-muted)', fontSize: '1.25rem' }}>{course.year} "{course.division}"</span></h1>
+                    <button
+                        onClick={handleExportCSV}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', backgroundColor: 'var(--accent-primary)', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 600, border: 'none', cursor: 'pointer' }}
+                    >
+                        <Download size={18} /> Exportar Excel
+                    </button>
+                </div>
 
                 {/* Tabs */}
                 <div className="tabs-scroll-container">
