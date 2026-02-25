@@ -43,6 +43,54 @@ function FinalGradeInput({ studentId, period, initialValue, existingId, onChange
     );
 }
 
+function FinalInformeInput({ studentId, period, suggestedValue, savedValue, existingId, onChange }: {
+    studentId: string, period: 1 | 2 | 3,
+    suggestedValue: string, savedValue: string | null,
+    existingId?: string,
+    onChange: (sid: string, p: 1 | 2 | 3, val: string | null, eid?: string) => void
+}) {
+    const effectiveVal = savedValue || suggestedValue;
+    const isManual = !!savedValue;
+
+    const color = effectiveVal === 'TEA' ? 'var(--content-green)' :
+        (effectiveVal === 'TEP' || effectiveVal === 'TED' ? 'var(--content-red)' : 'var(--text-primary)');
+
+    return (
+        <select
+            value={effectiveVal}
+            onChange={(e) => {
+                const val = e.target.value;
+                if (val === suggestedValue || val === "-") {
+                    // Try to clear it if it equals the suggested OR if they selected empty '-' 
+                    // (and suggested happens to be different, effectively clearing manual override)
+                    onChange(studentId, period, null, existingId);
+                } else {
+                    onChange(studentId, period, val, existingId);
+                }
+            }}
+            style={{
+                color,
+                fontWeight: isManual ? '900' : 'bold',
+                backgroundColor: 'transparent',
+                border: 'none',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                textAlign: 'center',
+                textAlignLast: 'center',
+                cursor: 'pointer',
+                width: '100%',
+                opacity: isManual ? 1 : 0.8
+            }}
+            title={isManual ? "Valor editado manualmente" : "Valor calculado automáticamente"}
+        >
+            <option value="-" style={{ color: 'black' }}>-</option>
+            <option value="TEA" style={{ color: 'black' }}>TEA</option>
+            <option value="TEP" style={{ color: 'black' }}>TEP</option>
+            <option value="TED" style={{ color: 'black' }}>TED</option>
+        </select>
+    );
+}
+
 function CourseDashboardContent() {
     const searchParams = useSearchParams();
     const courseId = searchParams.get('id');
@@ -1248,16 +1296,16 @@ function CourseDashboardContent() {
                                     <tr>
                                         <th rowSpan={2} style={{ textAlign: 'left', padding: '1rem', borderRight: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-app)', position: 'sticky', left: 0, zIndex: 10 }}>Alumno</th>
 
-                                        <th colSpan={6} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
+                                        <th colSpan={7} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
                                             1° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'}
                                         </th>
 
-                                        <th colSpan={6} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.1)' }}>
+                                        <th colSpan={7} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.1)' }}>
                                             2° {school?.term_structure === 'bi' ? 'Cuatrimestre' : 'Trimestre'}
                                         </th>
 
                                         {school?.term_structure === 'tri' && (
-                                            <th colSpan={6} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.1)' }}>
+                                            <th colSpan={7} style={{ textAlign: 'center', padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.1)' }}>
                                                 3° Trimestre
                                             </th>
                                         )}
@@ -1270,6 +1318,7 @@ function CourseDashboardContent() {
                                         <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Tareas</th>
                                         <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Sanc.</th>
                                         <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Intens.</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.2)' }}>Inf. Val.</th>
                                         <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.2)' }}>FINAL</th>
 
                                         {/* T2 */}
@@ -1278,6 +1327,7 @@ function CourseDashboardContent() {
                                         <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Tareas</th>
                                         <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Sanc.</th>
                                         <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Intens.</th>
+                                        <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.2)' }}>Inf. Val.</th>
                                         <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.2)' }}>FINAL</th>
 
                                         {/* T3 */}
@@ -1288,6 +1338,7 @@ function CourseDashboardContent() {
                                                 <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Tareas</th>
                                                 <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Sanc.</th>
                                                 <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 600, borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>Intens.</th>
+                                                <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.2)' }}>Inf. Val.</th>
                                                 <th style={{ padding: '0.5rem', fontSize: '0.75rem', fontWeight: 'bold', borderRight: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.2)' }}>FINAL</th>
                                             </>
                                         )}
@@ -1369,7 +1420,30 @@ function CourseDashboardContent() {
                                             const finalGradeMatch = courseGrades.find(g => g.student_id === studentId && g.period === period && g.type === 'final');
                                             const finalGrade = finalGradeMatch?.value || '';
 
-                                            return { avg, attPercentage, hwPercentage, sanctions: termSanctions || '-', intensifStatus, finalGrade, finalGradeId: finalGradeMatch?.id };
+                                            const finalInformeMatch = courseGrades.find(g => g.student_id === studentId && g.period === period && g.type === 'final_informe');
+                                            const savedInforme = finalInformeMatch?.qualitative_value || null;
+
+                                            let suggestedInforme = '-';
+                                            const hasAnyData = avg !== '-' || attPercentage !== '-' || hwPercentage !== '-' || intensifStatus !== '-';
+
+                                            if (hasAnyData) {
+                                                const attNum = parseInt(attPercentage);
+                                                const hwNum = parseInt(hwPercentage);
+                                                const safeAtt = isNaN(attNum) ? 100 : attNum;
+                                                const safeHw = isNaN(hwNum) ? 100 : hwNum;
+                                                const safeAvg = avg === '-' ? 10 : Number(avg);
+                                                const allApproved = (safeAvg >= 7 && intensifStatus === '-') || intensifStatus === 'AP';
+
+                                                if (safeAtt < 25) {
+                                                    suggestedInforme = 'TED';
+                                                } else if (allApproved && safeAtt >= 75 && safeHw >= 50) {
+                                                    suggestedInforme = 'TEA';
+                                                } else {
+                                                    suggestedInforme = 'TEP';
+                                                }
+                                            }
+
+                                            return { avg, attPercentage, hwPercentage, sanctions: termSanctions || '-', intensifStatus, finalGrade, finalGradeId: finalGradeMatch?.id, suggestedInforme, savedInforme, finalInformeId: finalInformeMatch?.id };
                                         };
                                         const handleFinalGradeChange = (studentId: string, period: 1 | 2 | 3, value: string, existingId?: string) => {
                                             const numValue = value === '' ? null : Number(value);
@@ -1386,6 +1460,24 @@ function CourseDashboardContent() {
                                                     period: period,
                                                     type: 'final',
                                                     value: numValue
+                                                });
+                                            }
+                                        };
+                                        const handleFinalInformeChange = (studentId: string, period: 1 | 2 | 3, value: string | null, existingId?: string) => {
+                                            if (existingId) {
+                                                if (value === null) {
+                                                    deleteGrade(existingId);
+                                                } else {
+                                                    updateGrade(existingId, { qualitative_value: value });
+                                                }
+                                            } else if (value !== null) {
+                                                addGrade(courseId, studentId, {
+                                                    description: `Informe Final ${period}°`,
+                                                    date: new Date().toISOString().split('T')[0],
+                                                    period: period,
+                                                    type: 'final_informe',
+                                                    value: null,
+                                                    qualitative_value: value
                                                 });
                                             }
                                         };
@@ -1417,6 +1509,16 @@ function CourseDashboardContent() {
                                                 <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s1.sanctions}</td>
                                                 <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', fontWeight: 600, color: s1.intensifStatus === 'AP' ? 'var(--content-green)' : s1.intensifStatus === 'DES' ? 'var(--content-red)' : 'var(--text-muted)' }}>{s1.intensifStatus}</td>
                                                 <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.05)' }}>
+                                                    <FinalInformeInput
+                                                        studentId={student.id}
+                                                        period={1}
+                                                        suggestedValue={s1.suggestedInforme}
+                                                        savedValue={s1.savedInforme}
+                                                        existingId={s1.finalInformeId}
+                                                        onChange={handleFinalInformeChange}
+                                                    />
+                                                </td>
+                                                <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(99, 102, 241, 0.05)' }}>
                                                     <FinalGradeInput
                                                         studentId={student.id}
                                                         period={1}
@@ -1432,6 +1534,16 @@ function CourseDashboardContent() {
                                                 <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s2.hwPercentage}</td>
                                                 <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s2.sanctions}</td>
                                                 <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', fontWeight: 600, color: s2.intensifStatus === 'AP' ? 'var(--content-green)' : s2.intensifStatus === 'DES' ? 'var(--content-red)' : 'var(--text-muted)' }}>{s2.intensifStatus}</td>
+                                                <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.05)' }}>
+                                                    <FinalInformeInput
+                                                        studentId={student.id}
+                                                        period={2}
+                                                        suggestedValue={s2.suggestedInforme}
+                                                        savedValue={s2.savedInforme}
+                                                        existingId={s2.finalInformeId}
+                                                        onChange={handleFinalInformeChange}
+                                                    />
+                                                </td>
                                                 <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(34, 197, 94, 0.05)' }}>
                                                     <FinalGradeInput
                                                         studentId={student.id}
@@ -1450,6 +1562,16 @@ function CourseDashboardContent() {
                                                         <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s3.hwPercentage}</td>
                                                         <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)' }}>{s3.sanctions}</td>
                                                         <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', fontWeight: 600, color: s3.intensifStatus === 'AP' ? 'var(--content-green)' : s3.intensifStatus === 'DES' ? 'var(--content-red)' : 'var(--text-muted)' }}>{s3.intensifStatus}</td>
+                                                        <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.05)' }}>
+                                                            <FinalInformeInput
+                                                                studentId={student.id}
+                                                                period={3}
+                                                                suggestedValue={s3.suggestedInforme}
+                                                                savedValue={s3.savedInforme}
+                                                                existingId={s3.finalInformeId}
+                                                                onChange={handleFinalInformeChange}
+                                                            />
+                                                        </td>
                                                         <td style={{ padding: '0 0.25rem', textAlign: 'center', borderRight: '1px solid var(--glass-border)', backgroundColor: 'rgba(245, 158, 11, 0.05)' }}>
                                                             <FinalGradeInput
                                                                 studentId={student.id}

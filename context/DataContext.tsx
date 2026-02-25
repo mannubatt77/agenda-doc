@@ -57,7 +57,7 @@ export interface Grade {
     qualitative_value?: string; // TEA, TEP, TED
     period: 1 | 2 | 3;
     date: string;
-    type: 'exam' | 'tp' | 'informe' | 'final';
+    type: 'exam' | 'tp' | 'informe' | 'final' | 'final_informe';
 }
 
 export interface IntensificationInstance {
