@@ -20,6 +20,7 @@ export default function SeatingPage() {
     // Grid Dimensions
     const [columns, setColumns] = useState(6);
     const [rows, setRows] = useState(5);
+    const [aisles, setAisles] = useState(1);
 
     // Initial load handled via select onChange.
 
@@ -125,6 +126,14 @@ export default function SeatingPage() {
                                 onChange={(e) => setRows(Number(e.target.value) || 5)}
                                 style={{ width: '60px', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-input)', color: 'white', textAlign: 'center' }}
                             />
+                            <label style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginLeft: '0.5rem' }}>Pasillos:</label>
+                            <input
+                                type="number"
+                                min="0" max="5"
+                                value={aisles}
+                                onChange={(e) => setAisles(Number(e.target.value) || 0)}
+                                style={{ width: '60px', padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-input)', color: 'white', textAlign: 'center' }}
+                            />
                             <button
                                 onClick={handleClearAll}
                                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 'var(--radius-md)', marginLeft: '1rem' }}
@@ -194,8 +203,9 @@ export default function SeatingPage() {
                                     const studentId = seatingState[key];
                                     const student = studentId ? courseStudents.find(s => s.id === studentId) : null;
 
-                                    // Aisle logic: create a visual gap in the middle
-                                    const isAisleRight = x === Math.floor(columns / 2) - 1;
+                                    // Dynamic Aisle Logic
+                                    const groupSize = Math.max(1, Math.floor(columns / (aisles + 1)));
+                                    const isAisleRight = aisles > 0 && (x + 1) % groupSize === 0 && (x + 1) < columns;
 
                                     return (
                                         <div
