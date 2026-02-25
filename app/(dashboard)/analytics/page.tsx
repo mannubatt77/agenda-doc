@@ -3,7 +3,6 @@
 import { useData } from "@/context/DataContext";
 import { useState } from "react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend, LineChart, Line, CartesianGrid } from "recharts";
-import { Printer } from "lucide-react";
 import { GradeStatsCharts } from "@/components/GradeStatsCharts";
 
 export default function AnalyticsPage() {
@@ -70,15 +69,6 @@ export default function AnalyticsPage() {
                         <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>Estadísticas del Curso</h1>
                         <p style={{ color: 'var(--text-secondary)' }}>Seleccione el establecimiento y la materia para visualizar sus analíticas.</p>
                     </div>
-                    {activeCourse && (
-                        <button
-                            onClick={() => window.print()}
-                            className="print-hide"
-                            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', backgroundColor: 'var(--bg-panel)', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 600, border: '1px solid var(--glass-border)', cursor: 'pointer' }}
-                        >
-                            <Printer size={18} /> Imprimir PDF
-                        </button>
-                    )}
                 </div>
 
                 <div className="print-hide" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', backgroundColor: 'var(--bg-panel)', padding: '1rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)' }}>
@@ -157,8 +147,8 @@ export default function AnalyticsPage() {
                                                 data={hwData}
                                                 cx="50%"
                                                 cy="50%"
-                                                innerRadius={60}
-                                                outerRadius={90}
+                                                innerRadius={45}
+                                                outerRadius={70}
                                                 paddingAngle={5}
                                                 dataKey="value"
                                                 label={(props: { value?: number, percent?: number }) => `${props.value || 0} (${((props.percent || 0) * 100).toFixed(0)}%)`}
