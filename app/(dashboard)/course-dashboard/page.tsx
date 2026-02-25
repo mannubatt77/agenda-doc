@@ -248,9 +248,10 @@ function CourseDashboardContent() {
     // --- GRADE HELPERS ---
     const tpScale = [
         { label: 'R', value: 2 },
-        { label: 'B-', value: 5 },
-        { label: 'B', value: 6 },
-        { label: 'B+', value: 7 },
+        { label: 'R+', value: 4 },
+        { label: 'B-', value: 6 },
+        { label: 'B', value: 7 },
+        { label: 'B+', value: 8 },
         { label: 'MB', value: 9 },
         { label: 'EX', value: 10 },
     ];
