@@ -36,9 +36,15 @@ export async function POST(req: NextRequest) {
         let title = 'Suscripción Mensual - DocX';
         let price = 5000;
 
-        if (planType === 'yearly') {
+        if (planType === 'quarterly') {
+            title = 'Suscripción 3 Meses - DocX';
+            price = 12000;
+        } else if (planType === 'biannual') {
+            title = 'Suscripción 6 Meses - DocX';
+            price = 25000;
+        } else if (planType === 'yearly') {
             title = 'Suscripción Anual - DocX';
-            price = 50000; // Let's keep a yearly option theoretically active for later, maybe 50000
+            price = 40000;
         }
 
         step = 'PREPARE_MP';

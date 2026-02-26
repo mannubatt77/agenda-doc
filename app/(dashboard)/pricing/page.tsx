@@ -3,13 +3,15 @@
 import { useData } from "@/context/DataContext";
 import { Check, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 
 export default function PricingPage() {
     const { subscription } = useData();
+    const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | 'biannual' | 'yearly'>('monthly');
 
     const isPremium = subscription?.status === 'active';
 
-    const handleSubscribe = async (plan: 'yearly' | 'monthly') => {
+    const handleSubscribe = async () => {
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
@@ -23,7 +25,7 @@ export default function PricingPage() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session.access_token}`
                 },
-                body: JSON.stringify({ planType: plan })
+                body: JSON.stringify({ planType: selectedPlan })
             });
 
             if (!response.ok) {
@@ -128,7 +130,18 @@ export default function PricingPage() {
                         </span>
                     </div>
 
-                    <p className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>$5.000 <span className="text-base font-normal" style={{ color: 'var(--text-muted)' }}>/ mes</span></p>
+                    <p className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+                        {selectedPlan === 'monthly' && "$5.000 "}
+                        {selectedPlan === 'quarterly' && "$12.000 "}
+                        {selectedPlan === 'biannual' && "$25.000 "}
+                        {selectedPlan === 'yearly' && "$40.000 "}
+                        <span className="text-base font-normal" style={{ color: 'var(--text-muted)' }}>
+                            {selectedPlan === 'monthly' && "/ mes"}
+                            {selectedPlan === 'quarterly' && "/ 3 meses ($4k/m)"}
+                            {selectedPlan === 'biannual' && "/ 6 meses"}
+                            {selectedPlan === 'yearly' && "/ año"}
+                        </span>
+                    </p>
                     <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>Para docentes que quieren enseñar mejor.</p>
 
                     <ul className="space-y-3 mb-8 flex-1">
@@ -155,13 +168,35 @@ export default function PricingPage() {
                             Plan Activo
                         </div>
                     ) : (
-                        <button
-                            onClick={() => handleSubscribe('monthly')}
-                            className="w-full py-3 px-4 rounded-lg transition-all font-medium shadow-lg hover:shadow-indigo-500/25"
-                            style={{ backgroundColor: 'var(--accent-primary)', color: 'white' }}
-                        >
-                            Suscribirse Ahora
-                        </button>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <select
+                                value={selectedPlan}
+                                onChange={(e: any) => setSelectedPlan(e.target.value)}
+                                style={{
+                                    padding: '0.75rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--glass-border)',
+                                    backgroundColor: 'var(--bg-input)',
+                                    color: 'white',
+                                    width: '100%',
+                                    outline: 'none',
+                                    fontSize: '0.9rem'
+                                }}
+                            >
+                                <option value="monthly">1 Mes - $5.000</option>
+                                <option value="quarterly">3 Meses - $12.000 ($4.000/mes)</option>
+                                <option value="biannual">6 Meses - $25.000 ($4.166/mes)</option>
+                                <option value="yearly">1 Año - $40.000 ($3.333/mes)</option>
+                            </select>
+
+                            <button
+                                onClick={handleSubscribe}
+                                className="w-full py-3 px-4 rounded-lg transition-all font-medium shadow-lg hover:shadow-indigo-500/25"
+                                style={{ backgroundColor: 'var(--accent-primary)', color: 'white' }}
+                            >
+                                Suscribirse Ahora
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>
