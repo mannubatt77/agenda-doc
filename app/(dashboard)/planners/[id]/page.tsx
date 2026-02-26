@@ -113,7 +113,7 @@ export default function PlannerEditor() {
     return (
         <>
             {/* SCREEN VIEW */}
-            <div className="p-6 max-w-5xl mx-auto pb-32 print:hidden">
+            <div className="p-6 max-w-5xl mx-auto pb-32 no-print">
                 <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
                     <div className="flex items-center gap-4 flex-1 min-w-[300px]">
                         <button
