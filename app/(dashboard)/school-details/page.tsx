@@ -12,6 +12,17 @@ function SchoolDetailsContent() {
     const router = useRouter();
     const { schools, getSchoolCourses, addCourse, updateCourse, deleteCourse, deleteSchool } = useData();
 
+    const [isAdding, setIsAdding] = useState(false);
+    const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+
+    const [courseName, setCourseName] = useState("");
+    const [courseYear, setCourseYear] = useState("");
+    const [courseDivision, setCourseDivision] = useState("");
+
+    // Schedule state
+    const [weeklyHours, setWeeklyHours] = useState<number>(0);
+    const [scheduleBlocks, setScheduleBlocks] = useState<{ day: string, start: string, end: string }[]>([]);
+
     // Handle missing ID
     if (!schoolId) {
         return <div>Error: No se especificó la escuela.</div>;
@@ -19,13 +30,6 @@ function SchoolDetailsContent() {
 
     const school = schools.find(s => s.id === schoolId);
     const courses = getSchoolCourses(schoolId);
-
-    const [isAdding, setIsAdding] = useState(false);
-    const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-
-    const [courseName, setCourseName] = useState("");
-    const [courseYear, setCourseYear] = useState("");
-    const [courseDivision, setCourseDivision] = useState("");
 
     if (!school) {
         return <div>Escuela no encontrada</div>;
@@ -35,6 +39,8 @@ function SchoolDetailsContent() {
         setCourseName("");
         setCourseYear("");
         setCourseDivision("");
+        setWeeklyHours(0);
+        setScheduleBlocks([]);
         setIsAdding(false);
         setEditingCourse(null);
     };
@@ -48,23 +54,63 @@ function SchoolDetailsContent() {
         setCourseName(course.name);
         setCourseYear(course.year);
         setCourseDivision(course.division);
+
+        let blocks = [];
+        if (course.schedule && course.schedule.startsWith('[')) {
+            try {
+                blocks = JSON.parse(course.schedule);
+            } catch (e) {
+                console.error("Error parsing schedule:", e);
+            }
+        }
+        setScheduleBlocks(blocks);
+        setWeeklyHours(blocks.length);
+
         setEditingCourse(course);
+    };
+
+    const handleWeeklyHoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const hours = parseInt(e.target.value) || 0;
+        setWeeklyHours(hours);
+        setScheduleBlocks(prev => {
+            const newBlocks = [...prev];
+            if (hours > newBlocks.length) {
+                for (let i = newBlocks.length; i < hours; i++) {
+                    newBlocks.push({ day: 'Lunes', start: '08:00', end: '10:00' });
+                }
+            } else if (hours < newBlocks.length) {
+                newBlocks.splice(hours);
+            }
+            return newBlocks;
+        });
+    };
+
+    const handleBlockChange = (index: number, field: string, value: string) => {
+        setScheduleBlocks(prev => {
+            const newBlocks = [...prev];
+            newBlocks[index] = { ...newBlocks[index], [field]: value };
+            return newBlocks;
+        });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (courseName && courseYear && courseDivision) {
+            const scheduleStr = scheduleBlocks.length > 0 ? JSON.stringify(scheduleBlocks) : "";
+
             if (editingCourse) {
                 updateCourse(editingCourse.id, {
                     name: courseName,
                     year: courseYear,
-                    division: courseDivision
+                    division: courseDivision,
+                    schedule: scheduleStr
                 });
             } else {
                 addCourse(schoolId, {
                     name: courseName,
                     year: courseYear,
-                    division: courseDivision
+                    division: courseDivision,
+                    schedule: scheduleStr
                 });
             }
             resetForm();
@@ -149,7 +195,65 @@ function SchoolDetailsContent() {
                                 style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-input)', border: 'none', color: 'white' }}
                             />
                         </div>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Horas Semanales</label>
+                            <select
+                                value={weeklyHours}
+                                onChange={handleWeeklyHoursChange}
+                                style={{ width: '100%', padding: '0.5rem', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-input)', border: 'none', color: 'white' }}
+                            >
+                                <option value={0}>Sin especificar</option>
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(h => (
+                                    <option key={h} value={h}>{h} {h === 1 ? 'hora' : 'horas'}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Schedule Blocks (takes full width if present) */}
+                        {scheduleBlocks.length > 0 && (
+                            <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
+                                <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600 }}>Días y Horarios de Dictado</label>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                    {scheduleBlocks.map((block, index) => (
+                                        <div key={index} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', backgroundColor: 'var(--bg-input)', padding: '0.5rem', borderRadius: 'var(--radius-sm)' }}>
+                                            <span style={{ fontSize: '0.8rem', opacity: 0.5, width: '20px' }}>#{index + 1}</span>
+                                            <select
+                                                value={block.day}
+                                                onChange={(e) => handleBlockChange(index, 'day', e.target.value)}
+                                                style={{ flex: 1, padding: '0.25rem', backgroundColor: 'transparent', border: '1px solid var(--glass-border)', color: 'white', borderRadius: 'var(--radius-sm)' }}
+                                            >
+                                                <option value="Lunes">Lunes</option>
+                                                <option value="Martes">Martes</option>
+                                                <option value="Miércoles">Miércoles</option>
+                                                <option value="Jueves">Jueves</option>
+                                                <option value="Viernes">Viernes</option>
+                                                <option value="Sábado">Sábado</option>
+                                            </select>
+
+                                            <span style={{ fontSize: '0.8rem', marginLeft: '0.5rem' }}>De:</span>
+                                            <input
+                                                type="time"
+                                                value={block.start}
+                                                onChange={(e) => handleBlockChange(index, 'start', e.target.value)}
+                                                style={{ padding: '0.25rem', backgroundColor: 'transparent', border: '1px solid var(--glass-border)', color: 'white', borderRadius: 'var(--radius-sm)' }}
+                                                required
+                                            />
+
+                                            <span style={{ fontSize: '0.8rem' }}>A:</span>
+                                            <input
+                                                type="time"
+                                                value={block.end}
+                                                onChange={(e) => handleBlockChange(index, 'end', e.target.value)}
+                                                style={{ padding: '0.25rem', backgroundColor: 'transparent', border: '1px solid var(--glass-border)', color: 'white', borderRadius: 'var(--radius-sm)' }}
+                                                required
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div style={{ display: 'flex', gap: '0.5rem', gridColumn: '1 / -1', marginTop: '1rem' }}>
                             <button type="submit" style={{ flex: 1, padding: '0.5rem', backgroundColor: 'var(--accent-primary)', color: 'white', borderRadius: 'var(--radius-sm)' }}>{editingCourse ? 'Actualizar' : 'Guardar'}</button>
                             <button type="button" onClick={resetForm} style={{ padding: '0.5rem', backgroundColor: 'transparent', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-sm)' }}>Cancelar</button>
                         </div>
@@ -177,7 +281,7 @@ function SchoolDetailsContent() {
                     }}>
                         <div>
                             <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{course.name}</div>
-                            <div style={{ color: 'var(--text-secondary)' }}>{course.year} "{course.division}"</div>
+                            <div style={{ color: 'var(--text-secondary)' }}>{course.year} &quot;{course.division}&quot;</div>
                         </div>
 
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
