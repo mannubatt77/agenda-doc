@@ -25,7 +25,7 @@ export default function PlannerEditor() {
     const { courses, schools } = useData();
     const isNew = id === 'new';
 
-    const [title, setTitle] = useState("Nueva Planificación");
+    const [title, setTitle] = useState("");
     const [selectedCourse, setSelectedCourse] = useState("");
     const [activeTab, setActiveTab] = useState(TABS[0].id);
     const [contentBlocks, setContentBlocks] = useState<Record<string, string>>({});
