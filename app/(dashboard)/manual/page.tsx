@@ -8,14 +8,23 @@ export default function ManualPage() {
 
     const sections = [
         {
-            title: "1. Escuelas y Materias (El primer paso)",
+            title: "1. Escuelas y Materias (El primer paso esencial)",
             icon: <BookOpen className="text-blue-400" size={24} />,
-            description: "Para comenzar a usar Agenda.doc, lo primero que necesitas es cargar tus espacios de trabajo.",
+            description: "Para comenzar a utilizar Agenda.doc y acceder al resto de las herramientas (como asistencia, calificaciones y plano del aula), primero debes estructurar tu entorno vinculando tus instituciones y los cursos que dictas allí. Sigue esta guía detallada:",
             steps: [
-                "Ve a la sección 'Escuelas y Materias' desde el menú lateral.",
-                "Haz clic en el botón '+' para crear un Establecimiento (ej: E.E.S N° 1). Selecciona si es trimestral o cuatrimestral y graba las fechas de cada período.",
-                "Una vez creada la escuela, entra en ella y agrega tus Materias (ej: Prácticas del Lenguaje, 3°A).",
-                "Puedes configurar los horarios de cada materia para verlos más tarde en tu calendario."
+                "Dirígete a la sección 'Escuelas y Materias' desde el menú lateral principal.",
+                "CREAR UN ESTABLECIMIENTO: En el panel principal, haz clic en la tarjeta punteada grande con el símbolo '+' que dice 'Agregar Escuela'.",
+                "Se abrirá una ventana emergente. Define el 'Nombre' oficial o abreviado de la institución educativa en la que trabajas (Ejemplo: E.E.S N° 12, Instituto Cervantes, CENS 451, etc).",
+                "ESTRUCTURA DE PERÍODOS (Importante): Selecciona cómo evalúa el establecimiento mediante el selector 'Formato'. Puedes elegir entre 'Trimestral' (3 períodos de nota) o 'Cuatrimestral' (2 períodos de nota). Esta decisión moldeará la matriz de promedios matemáticos finales y no se puede cambiar luego para esa escuela en particular.",
+                "Verifica que el 'Ciclo Lectivo' sea el año en curso (la aplicación lo coloca por defecto, ej: 2026).",
+                "CALENDARIO DE CIERRES: Utiliza los selectores de fechas para fijar exactamente qué día/mes 'Inicia' y 'Termina' cada trimestre o cuatrimestre institucional. Estos cortes son fundamentales para que el sistema sepa agrupar las notas de tus estudiantes de forma automática. Al finalizar de cargar todas las fechas, presiona el botón 'Crear Escuela'.",
+                "Una vez guardada, la escuela aparecerá en formato de tarjeta azul en tu panel listando su formato. Si en algún momento ya no dictas allí, puedes usar el icono de 'Papelera' en la esquina superior derecha de la tarjeta para borrarla permanentemente junto a sus datos.",
+                "VINCULAR CURSOS/MATERIAS: Haz clic en cualquier parte de la nueva tarjeta de la Escuela para ingresar en su sector privado. Entrarás a un listado vacío.",
+                "Presiona el botón superior oscuro que dice '+ Agregar Materia'.",
+                "Rellena los campos académicos obligatorios para tu comodidad visual: 'Nombre de la Materia' (Ej: Prácticas del Lenguaje), 'Año' numérico (Ej: 3ro) y 'División' (Ej: A, B o Única).",
+                "HORARIOS: En el cuadro de texto 'Horario', puedes tipear texto libremente con tus días y horas de forma que te quede lo más prolijo posible. Recomendamos el formato: 'Lunes (08:00 a 10:00) / Miércoles (10:00 a 12:00)'. Esta información viajará automáticamente y se sincronizará con tu pantalla 'Calendario' en el menú principal para visualizarse como agenda diaria.",
+                "Guarda el curso apretando el botón confirmar.",
+                "¡Excelente! Verás tu curso en formato de panel rectangular. Solo con hacer clic sobre su nombre o el icono del libro desplegado, estarás adentrándote al 'Dashboard Rápido' de dicha materia, habilitando por fin las características de Alumnos, Asistencia y Calificaciones exclusivas para ese grupo."
             ]
         },
         {
