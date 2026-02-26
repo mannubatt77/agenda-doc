@@ -261,12 +261,12 @@ export default function PlannerEditor() {
                     if (!contentBlocks[tab.id] || contentBlocks[tab.id] === '<p></p>') return null;
                     return (
                         <div key={tab.id} style={{ marginBottom: '2rem', breakInside: 'avoid' }}>
-                            <h3 style={{ fontSize: '14pt', fontWeight: 'bold', borderBottom: '1px solid #ccc', paddingBottom: '0.5rem', marginBottom: '1rem', textTransform: 'uppercase', color: '#333' }}>
+                            <h3 style={{ fontSize: '14pt', fontWeight: 'bold', borderBottom: '1px solid #ccc', paddingBottom: '0.5rem', marginBottom: '1rem', textTransform: 'uppercase', color: '#000' }}>
                                 {tab.label}
                             </h3>
                             <div
                                 className="print-richtext tiptap-editor-content"
-                                style={{ fontSize: '11pt', lineHeight: '1.6' }}
+                                style={{ fontSize: '11pt', lineHeight: '1.6', color: '#000' }}
                                 dangerouslySetInnerHTML={{ __html: contentBlocks[tab.id] }}
                             />
                         </div>
