@@ -22,7 +22,6 @@ export default function ManualPage() {
                 "VINCULAR CURSOS/MATERIAS: Haz clic en cualquier parte de la nueva tarjeta de la Escuela para ingresar en su sector privado. Entrarás a un listado vacío.",
                 "Presiona el botón superior oscuro que dice '+ Agregar Materia'.",
                 "Rellena los campos académicos obligatorios para tu comodidad visual: 'Nombre de la Materia' (Ej: Prácticas del Lenguaje), 'Año' numérico (Ej: 3ro) y 'División' (Ej: A, B o Única).",
-                "HORARIOS: En el cuadro de texto 'Horario', puedes tipear texto libremente con tus días y horas de forma que te quede lo más prolijo posible. Recomendamos el formato: 'Lunes (08:00 a 10:00) / Miércoles (10:00 a 12:00)'. Esta información viajará automáticamente y se sincronizará con tu pantalla 'Calendario' en el menú principal para visualizarse como agenda diaria.",
                 "Guarda el curso apretando el botón confirmar.",
                 "¡Excelente! Verás tu curso en formato de panel rectangular. Solo con hacer clic sobre su nombre o el icono del libro desplegado, estarás adentrándote al 'Dashboard Rápido' de dicha materia, habilitando por fin las características de Alumnos, Asistencia y Calificaciones exclusivas para ese grupo."
             ]
