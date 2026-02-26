@@ -105,7 +105,7 @@ function CourseDashboardContent() {
         getAttendance, markAttendance, attendance: allAttendance,
         getStudentGrades, addGrade, updateGrade, deleteGrade, grades: allGrades,
         getCourseEvents, addEvent, deleteEvent,
-        homeworks: allHomeworks, addHomework, deleteHomework, toggleHomeworkStatus, getHomeworkStatus,
+        homeworks: allHomeworks, homeworkRecords, addHomework, deleteHomework, toggleHomeworkStatus, getHomeworkStatus,
         sanctions: allSanctions, addSanction, deleteSanction, getCourseSanctions,
         topicLogs: allTopicLogs, addTopicLog, deleteTopicLog, getCourseTopicLogs,
         getPeriodFromDate, intensificationInstances, intensificationResults
@@ -539,7 +539,7 @@ function CourseDashboardContent() {
 
             // Homework %
             const studentHw = homeworkRecords.filter(r => r.student_id === student.id);
-            const totalHw = courseHomework.length;
+            const totalHw = courseHomeworks.length;
             const doneHw = studentHw.filter(r => r.status === 'done').length;
             const hwPercent = totalHw > 0 ? Math.round((doneHw / totalHw) * 100) : '-';
 

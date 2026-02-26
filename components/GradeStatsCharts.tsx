@@ -76,13 +76,19 @@ export function GradeStatsCharts({ students, grades, termStructure = 'bi' }: Gra
                                 outerRadius={70}
                                 paddingAngle={5}
                                 dataKey="value"
-                                label={(props: { value?: number, percent?: number }) => `${props.value || 0} (${((props.percent || 0) * 100).toFixed(0)}%)`}
-                                labelLine={true}
                             >
                                 {data.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                             </Pie>
                             <Tooltip contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--glass-border)', borderRadius: '8px' }} itemStyle={{ color: 'white' }} />
-                            <Legend verticalAlign="bottom" height={36} />
+                            <Legend
+                                verticalAlign="bottom"
+                                height={36}
+                                formatter={(value, entry: any) => {
+                                    const total = data.reduce((acc, curr) => acc + curr.value, 0);
+                                    const percent = total > 0 ? ((entry.payload.value / total) * 100).toFixed(0) : 0;
+                                    return `${value} (${entry.payload.value} - ${percent}%)`;
+                                }}
+                            />
                         </PieChart>
                     </ResponsiveContainer>
                 ) : (

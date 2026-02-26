@@ -151,13 +151,27 @@ export default function AnalyticsPage() {
                                                 outerRadius={70}
                                                 paddingAngle={5}
                                                 dataKey="value"
-                                                label={(props: { value?: number, percent?: number }) => `${props.value || 0} (${((props.percent || 0) * 100).toFixed(0)}%)`}
-                                                labelLine={true}
                                             >
                                                 {hwData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                                             </Pie>
                                             <Tooltip contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--glass-border)', borderRadius: '8px' }} itemStyle={{ color: 'white' }} />
-                                            <Legend verticalAlign="bottom" height={36} />
+                                            <Legend
+                                                verticalAlign="bottom"
+                                                height={36}
+                                                // @ts-expect-error: recharts typing issue
+                                                payload={
+                                                    hwData.map((item) => {
+                                                        const total = hwData.reduce((acc, curr) => acc + curr.value, 0);
+                                                        const percent = total > 0 ? ((item.value / total) * 100).toFixed(0) : 0;
+                                                        return {
+                                                            id: item.name,
+                                                            type: "square" as const,
+                                                            value: `${item.name} (${item.value} - ${percent}%)`,
+                                                            color: item.color
+                                                        };
+                                                    })
+                                                }
+                                            />
                                         </PieChart>
                                     </ResponsiveContainer>
                                 ) : (

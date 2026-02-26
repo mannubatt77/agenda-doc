@@ -182,7 +182,7 @@ export default function SeatingPage() {
                     </div>
 
                     {/* Classroom Grid */}
-                    <div style={{ flex: 1, backgroundColor: 'var(--bg-panel)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', minWidth: '500px' }}>
+                    <div style={{ flex: 1, backgroundColor: 'var(--bg-panel)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', minWidth: '500px', overflowX: 'auto' }}>
 
                         {/* Pizarra representation */}
                         <div style={{ width: '60%', height: '40px', backgroundColor: '#334155', border: '2px solid #1e293b', borderRadius: '8px', margin: '0 auto 3rem auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontWeight: 'bold', letterSpacing: '2px' }}>
