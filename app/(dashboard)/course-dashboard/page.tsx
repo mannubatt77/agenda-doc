@@ -3,6 +3,7 @@
 import { useData, Student, Grade } from "@/context/DataContext";
 import { useState, useMemo, Suspense, useEffect } from "react";
 import { ArrowLeft, UserPlus, FileText, Check, Calculator, Clock, Calendar as CalIcon, Trash2, Edit2, Download, Search, Plus, Printer, LayoutDashboard, Settings, LogOut, CheckSquare, XSquare, MinusSquare, AlertCircle, BookOpen, PenLine, FileSignature, AlertTriangle, RotateCw, History, ClipboardList } from "lucide-react";
+import * as XLSX from "xlsx";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AttendanceSection } from "./AttendanceSection";
 import { GradeStatsCharts } from "@/components/GradeStatsCharts";
@@ -108,7 +109,8 @@ function CourseDashboardContent() {
         homeworks: allHomeworks, homeworkRecords, addHomework, deleteHomework, toggleHomeworkStatus, getHomeworkStatus,
         sanctions: allSanctions, addSanction, deleteSanction, getCourseSanctions,
         topicLogs: allTopicLogs, addTopicLog, deleteTopicLog, getCourseTopicLogs,
-        getPeriodFromDate, intensificationInstances, intensificationResults
+        getPeriodFromDate, intensificationInstances, intensificationResults,
+        pendingStudents, getCoursePendingExams, pendingGrades
     } = useData();
 
     const course = courses.find(c => c.id === courseId);
@@ -519,64 +521,170 @@ function CourseDashboardContent() {
         window.print();
     };
 
-    const handleExportCSV = () => {
+    const handleExportExcel = () => {
         if (!course) return;
         const termConfig = school?.term_structure || 'bi';
 
-        let csvContent = "\uFEFF"; // BOM for Excel UTF-8
+        // 1. Alumnos Sheet
+        const alumnosData = students.map(s => ({
+            "Apellido y Nombre": `${s.surname}, ${s.name}`,
+            "Condición": s.condition
+        }));
+        const wsAlumnos = XLSX.utils.json_to_sheet(alumnosData);
 
-        // Headers
-        const headers = ["Alumno", "Asistencia (%)", "Tareas (%)", "1° Cuat.", "2° Cuat."];
-        if (termConfig === 'tri') headers[4] = "2° Trim.";
-        if (termConfig === 'tri') headers.push("3° Trim.");
-        headers.push("Sanciones");
+        // 2. Asistencia Sheet
+        const courseAttendances = allAttendance.filter(a => a.course_id === courseId);
+        const attendanceDates = Array.from(new Set(courseAttendances.map(a => a.date))).sort();
 
-        csvContent += headers.join(",") + "\n";
+        const asistenciaData = activeStudents.map(student => {
+            const row: any = { "Alumno": `${student.surname}, ${student.name}` };
 
-        // Rows
-        students.forEach(student => {
-            const stats = getStats(student.id);
-
-            // Homework %
-            const studentHw = homeworkRecords.filter(r => r.student_id === student.id);
-            const totalHw = courseHomeworks.length;
-            const doneHw = studentHw.filter(r => r.status === 'done').length;
-            const hwPercent = totalHw > 0 ? Math.round((doneHw / totalHw) * 100) : '-';
-
-            // Attendance %
-            const sAtt = allAttendance.filter(a => a.student_id === student.id && a.course_id === courseId);
-            const totalAtt = sAtt.length;
-            const presentAtt = sAtt.filter(a => a.present).length;
-            const attPercent = totalAtt > 0 ? Math.round((presentAtt / totalAtt) * 100) : '-';
-
-            // Sanctions
-            const sSanctions = courseSanctions.filter(s => s.student_id === student.id).length;
-
-            const row = [
-                `"${student.surname}, ${student.name}"`,
-                attPercent,
-                hwPercent,
-                stats.avg1,
-                stats.avg2
-            ];
-
-            if (termConfig === 'tri') row.push(stats.avg3);
-            row.push(sSanctions);
-
-            csvContent += row.join(",") + "\n";
+            attendanceDates.forEach(date => {
+                const record = courseAttendances.find(a => a.student_id === student.id && a.date === date);
+                const colName = date.split('-').reverse().join('/');
+                if (!record) {
+                    row[colName] = '-';
+                } else if (record.present) {
+                    row[colName] = 'P';
+                } else if (record.justification) {
+                    row[colName] = 'AJ';
+                } else {
+                    row[colName] = 'A';
+                }
+            });
+            return row;
         });
+        const wsAsistencia = XLSX.utils.json_to_sheet(asistenciaData);
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
+        // 3. Notas Sheet
+        const notasData = activeStudents.map(student => {
+            const stats = getStats(student.id);
+            const row: any = {
+                "Alumno": `${student.surname}, ${student.name}`,
+                "1° Cuat.": stats.avg1,
+                "2° Cuat.": stats.avg2
+            };
+            if (termConfig === 'tri') row["3° Trim."] = stats.avg3;
+            row["Promedio General"] = stats.generalAvg;
 
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Planilla_${course.name}_${course.year}${course.division}.csv`);
-        link.style.visibility = 'hidden';
+            // Include individual assignments dynamically
+            assignmentColumns.forEach(col => {
+                const grade = getCellGrade(student.id, col);
+                const colName = `${col.period}° ${termConfig === 'bi' ? 'C' : 'T'} - ${col.description} (${col.date.split('-').reverse().join('/')})`;
+                if (col.type === 'informe') {
+                    row[colName] = grade?.qualitative_value || '-';
+                } else if (col.type === 'tp') {
+                    const tpLabel = tpScale.find(s => s.value === grade?.value)?.label || '-';
+                    row[colName] = tpLabel;
+                } else {
+                    row[colName] = grade?.value ?? '-';
+                }
+            });
 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+            return row;
+        });
+        const wsNotas = XLSX.utils.json_to_sheet(notasData);
+
+        // 4. Tareas Sheet
+        const tareasData = activeStudents.map(student => {
+            const row: any = { "Alumno": `${student.surname}, ${student.name}` };
+            courseHomeworks.forEach(hw => {
+                const status = getHomeworkStatus(hw.id, student.id);
+                const colName = `${hw.period}° ${termConfig === 'bi' ? 'C' : 'T'} - ${hw.description} (${hw.date.split('-').reverse().join('/')})`;
+                let text = '-';
+                if (status === 'done') text = 'Entregado';
+                else if (status === 'missing') text = 'No Entregado';
+                else if (status === 'incomplete') text = 'Incompleto';
+                else if (status === 'absent') text = 'Ausente';
+                row[colName] = text;
+            });
+            row["% 1°"] = getHomeworkPercentage(student.id, 1);
+            row["% 2°"] = getHomeworkPercentage(student.id, 2);
+            if (termConfig === 'tri') row["% 3°"] = getHomeworkPercentage(student.id, 3);
+            return row;
+        });
+        const wsTareas = XLSX.utils.json_to_sheet(tareasData);
+
+        // 5. Sanciones Sheet
+        const sancionesData = courseSanctions.map(s => {
+            const st = students.find(stu => stu.id === s.student_id);
+            return {
+                "Fecha": s.date.split('-').reverse().join('/'),
+                "Alumno": st ? `${st.surname}, ${st.name}` : 'Desconocido',
+                "Motivo": s.reason,
+                "Descripción": s.description || ''
+            };
+        });
+        const wsSanciones = XLSX.utils.json_to_sheet(sancionesData);
+
+        // 6. Libro de Temas Sheet
+        const libroTemasData = getCourseTopicLogs(courseId)
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+            .map(log => ({
+                "Fecha": log.date.split('-').reverse().join('/'),
+                "Título / Tema": log.title,
+                "Contenido": log.content
+            }));
+        const wsLibroTemas = XLSX.utils.json_to_sheet(libroTemasData);
+
+        // 7. Previas Sheet
+        const previasData = getCoursePendingExams(courseId).flatMap(exam => {
+            return pendingGrades.filter(g => g.exam_id === exam.id).map(pg => {
+                const st = pendingStudents.find(s => s.id === pg.student_id);
+                return {
+                    "Materia": exam.description,
+                    "Fecha (Instancia)": exam.date.split('-').reverse().join('/'),
+                    "Alumno": st ? `${st.surname}, ${st.name}` : 'Desconocido',
+                    "Año Original": st?.original_year || '',
+                    "Nota": pg.grade ?? '-'
+                };
+            });
+        });
+        const wsPrevias = XLSX.utils.json_to_sheet(previasData);
+
+        // 8. Intensificación Sheet
+        const intensificacionData = intensificationResults.map(ir => {
+            const inst = intensificationInstances.find(i => i.id === ir.instance_id && i.course_id === courseId);
+            if (!inst) return null; // Filter out instances from other courses just in case
+            const st = students.find(s => s.id === ir.student_id);
+            return {
+                "Instancia": inst.title || `Recup. ${inst.original_period}°`,
+                "Contenido Evaluado": inst.original_description,
+                "Fecha": inst.date.split('-').reverse().join('/'),
+                "Alumno": st ? `${st.surname}, ${st.name}` : 'Desconocido',
+                "Resultado": ir.is_approved ? 'Aprobado' : 'Desaprobado',
+                "Nota Final": ir.grade ?? '-'
+            };
+        }).filter(item => item !== null);
+        const wsIntensificacion = XLSX.utils.json_to_sheet(intensificacionData);
+
+        // Add to workbook
+        const wb = XLSX.utils.book_new();
+        if (alumnosData.length > 0) XLSX.utils.book_append_sheet(wb, wsAlumnos, "Alumnos");
+        else XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Mensaje: "Sin datos" }]), "Alumnos");
+
+        if (asistenciaData.length > 0) XLSX.utils.book_append_sheet(wb, wsAsistencia, "Asistencia");
+        else XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Mensaje: "Sin datos" }]), "Asistencia");
+
+        if (notasData.length > 0) XLSX.utils.book_append_sheet(wb, wsNotas, "Notas");
+        else XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Mensaje: "Sin datos" }]), "Notas");
+
+        if (tareasData.length > 0) XLSX.utils.book_append_sheet(wb, wsTareas, "Tareas");
+        else XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Mensaje: "Sin datos" }]), "Tareas");
+
+        if (sancionesData.length > 0) XLSX.utils.book_append_sheet(wb, wsSanciones, "Sanciones");
+        else XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Mensaje: "Sin datos" }]), "Sanciones");
+
+        if (libroTemasData.length > 0) XLSX.utils.book_append_sheet(wb, wsLibroTemas, "Libro de Temas");
+        else XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Mensaje: "Sin datos" }]), "Libro de Temas");
+
+        if (previasData.length > 0) XLSX.utils.book_append_sheet(wb, wsPrevias, "Previas");
+        else XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Mensaje: "Sin datos" }]), "Previas");
+
+        if (intensificacionData.length > 0) XLSX.utils.book_append_sheet(wb, wsIntensificacion, "Intensificación");
+        else XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Mensaje: "Sin datos" }]), "Intensificación");
+
+        XLSX.writeFile(wb, `Planilla_${course.name}_${course.year}_${course.division}.xlsx`);
     };
 
 
@@ -628,7 +736,7 @@ function CourseDashboardContent() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>{course.name} <span style={{ color: 'var(--text-muted)', fontSize: '1.25rem' }}>{course.year} "{course.division}"</span></h1>
                     <button
-                        onClick={handleExportCSV}
+                        onClick={handleExportExcel}
                         style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', backgroundColor: 'var(--accent-primary)', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 600, border: 'none', cursor: 'pointer' }}
                     >
                         <Download size={18} /> Exportar Excel

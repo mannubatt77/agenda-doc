@@ -161,8 +161,8 @@ body {
         height: auto !important;
     }
 
-    /* Clean up specific divs */
-    div {
+    /* Clean up specific divs, except those we explicitly want to keep exact */
+    div:not(.print-exact):not(.print-exact *) {
         overflow: visible !important;
         background-color: transparent !important;
         border: none !important;

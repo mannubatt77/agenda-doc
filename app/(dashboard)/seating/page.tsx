@@ -2,7 +2,7 @@
 
 import { useData } from "@/context/DataContext";
 import { useState, useEffect } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, Printer } from "lucide-react";
 
 export default function SeatingPage() {
     const { schools, courses, students } = useData();
@@ -71,9 +71,22 @@ export default function SeatingPage() {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div className="selection-header">
-                <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>Plano del Aula</h1>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Organice visualmente a los alumnos arrastrándolos a sus pupitres.</p>
+            <div className="selection-header no-print">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold' }}>Plano del Aula</h1>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Organice visualmente a los alumnos arrastrándolos a sus pupitres.</p>
+                    </div>
+                    {selectedCourseId && (
+                        <button
+                            onClick={() => window.print()}
+                            className="no-print"
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', backgroundColor: 'var(--accent-primary)', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 600, border: 'none', cursor: 'pointer' }}
+                        >
+                            <Printer size={18} /> Imprimir Mapa
+                        </button>
+                    )}
+                </div>
 
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', backgroundColor: 'var(--bg-panel)', padding: '1rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)' }}>
                     <select
@@ -149,7 +162,7 @@ export default function SeatingPage() {
                 <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
 
                     {/* Unassigned Students Sidebar */}
-                    <div style={{ width: '280px', backgroundColor: 'var(--bg-panel)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div className="no-print" style={{ width: '280px', backgroundColor: 'var(--bg-panel)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Alumnos Sin Asignar ({unassignedStudents.length})</h2>
                         <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Haga clic en un alumno y luego en un asiento vacío para ubicarlo.</p>
 
@@ -185,12 +198,12 @@ export default function SeatingPage() {
                     <div style={{ flex: 1, backgroundColor: 'var(--bg-panel)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', minWidth: '500px', overflowX: 'auto' }}>
 
                         {/* Pizarra representation */}
-                        <div style={{ width: '60%', height: '40px', backgroundColor: '#334155', border: '2px solid #1e293b', borderRadius: '8px', margin: '0 auto 3rem auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontWeight: 'bold', letterSpacing: '2px' }}>
+                        <div style={{ width: '60%', height: '40px', backgroundColor: '#334155', border: '2px solid #1e293b', borderRadius: '8px', margin: '0 auto 3rem auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontWeight: 'bold', letterSpacing: '2px' }} className="print-pizarra print-exact">
                             PIZARRA
                         </div>
 
                         {/* The Grid (Desks) */}
-                        <div style={{
+                        <div className="print-exact" style={{
                             display: 'grid',
                             gridTemplateColumns: `repeat(${columns}, 1fr)`,
                             gap: '1rem',
@@ -240,9 +253,8 @@ export default function SeatingPage() {
                                             }}
                                         >
                                             {student ? (
-                                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white' }}>
-                                                    {student.surname}
-                                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 400 }}>{student.name}</div>
+                                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white', lineHeight: '1.2' }}>
+                                                    {student.surname}, {student.name.charAt(0)}.
                                                 </div>
                                             ) : (
                                                 <span style={{ color: 'var(--glass-border)', fontSize: '1.5rem', display: selectedStudentToAssign ? 'block' : 'none' }}>+</span>
@@ -253,7 +265,7 @@ export default function SeatingPage() {
                             ))}
                         </div>
 
-                        <div style={{ marginTop: '3rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                        <div className="no-print" style={{ marginTop: '3rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
                             Para desasignar un pupitre, simplemente haga clic en él.
                         </div>
 
