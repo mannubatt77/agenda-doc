@@ -136,7 +136,7 @@ export default function PlannerEditor() {
                     />
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                     {lastSaved && (
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                             Guardado: {lastSaved.toLocaleTimeString()}
@@ -150,20 +150,20 @@ export default function PlannerEditor() {
                             backgroundColor: 'rgba(255,255,255,0.05)',
                             padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)',
                             border: '1px solid var(--glass-border)', color: 'var(--text-primary)',
-                            cursor: 'pointer', fontWeight: 500
+                            cursor: 'pointer', fontWeight: 500, whiteSpace: 'nowrap'
                         }}
                         className="hover:bg-[rgba(255,255,255,0.1)]"
                     >
                         {isSaving ? "Guardando..." : <><Save size={18} /> Guardar</>}
                     </button>
                     <button
-                        title="La exportación a PDF estará disponible pronto"
+                        onClick={() => alert("El motor de armado de PDF y membretes escolares se encuentra en desarrollo. \n\n¡Pronto podrás exportar tus planificaciones con formato profesional e imprimirlas directamente desde acá!")}
                         style={{
                             display: 'flex', alignItems: 'center', gap: '0.5rem',
                             backgroundColor: 'var(--accent-primary)',
                             padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)',
                             border: 'none', color: 'white',
-                            cursor: 'pointer', fontWeight: 500
+                            cursor: 'pointer', fontWeight: 500, whiteSpace: 'nowrap'
                         }}
                         className="hover:shadow-lg hover:shadow-indigo-500/20"
                     >

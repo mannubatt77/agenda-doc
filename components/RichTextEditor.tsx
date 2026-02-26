@@ -14,6 +14,7 @@ export default function RichTextEditor({ content, onChange, placeholder, editabl
         extensions: [
             StarterKit,
         ],
+        immediatelyRender: false,
         content: content || (placeholder ? `<p style="color: gray;">${placeholder}</p>` : ''),
         editable: editable,
         onUpdate: ({ editor }) => {
