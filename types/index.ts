@@ -18,3 +18,15 @@ export interface Course {
     name: string;
     school_id: string;
 }
+
+export interface LessonPlan {
+    id: string;
+    user_id: string;
+    course_id: string;
+    title: string;
+    academic_year: number;
+    content_blocks: any;
+    created_at: string;
+    updated_at: string;
+    courses?: Course; // Optional relation join
+}

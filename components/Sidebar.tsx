@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Home, User, BookOpen, Calendar, LogOut, X, FileText, BarChart2, LayoutGrid, Users } from 'lucide-react';
+import { Home, User, BookOpen, Calendar, LogOut, X, FileText, BarChart2, LayoutGrid, Users, PenTool } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface SidebarProps {
@@ -24,6 +24,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         { icon: BarChart2, label: 'Estadísticas', href: '/analytics' },
         { icon: LayoutGrid, label: 'Plano del Aula', href: '/seating' },
         { icon: Users, label: 'Grupos Mágicos', href: '/groups' },
+        { icon: PenTool, label: 'Planificaciones', href: '/planners' },
     ];
 
     return (
