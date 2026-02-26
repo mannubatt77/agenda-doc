@@ -91,6 +91,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     <div style={{ padding: '0 1rem 0.5rem', fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center', opacity: 0.7 }}>
                         Develop by BATSISTEMAS
                     </div>
+                    <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+                        <Link href="/manual" onClick={() => { if (window.innerWidth < 1024 && onClose) onClose() }} style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', textDecoration: 'none', fontWeight: 500 }} className="hover:underline">
+                            📖 Ver Manual de Usuario
+                        </Link>
+                    </div>
                     <button
                         onClick={handleLogout}
                         style={{
