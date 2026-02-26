@@ -243,16 +243,21 @@ export default function PlannerEditor() {
                 ))}
             </div>
 
-            {/* PRINT VIEW (Formal Document) */}
-            <div className="hidden print:block bg-white text-black print-document" style={{ fontFamily: 'Georgia, serif', padding: '10mm 15mm' }}>
+            {/* VISTA PREVIA DEL DOCUMENTO EN PANTALLA */}
+            <hr className="no-print" style={{ borderColor: 'var(--glass-border)', margin: '4rem 0 2rem' }} />
+            <h2 className="no-print" style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-muted)', textAlign: 'center', marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Vista Previa del Documento
+            </h2>
+
+            <div className="print-document" style={{ fontFamily: 'Georgia, serif', padding: '10mm 15mm' }}>
                 {/* Cabezal Formal */}
-                <div style={{ borderBottom: '2px solid black', paddingBottom: '1rem', marginBottom: '2rem', textAlign: 'center' }}>
-                    <h1 style={{ fontSize: '24pt', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Planificación Anual</h1>
-                    <h2 style={{ fontSize: '16pt', fontWeight: 'normal', marginBottom: '0.5rem' }}>{title || "Sin Título"}</h2>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', fontSize: '12pt', marginTop: '1rem' }}>
-                        <p><strong>Materia:</strong> {currentCourse?.name || 'No especificada'}</p>
-                        <p><strong>Establecimiento:</strong> {currentSchool?.name || 'No especificada'}</p>
-                        <p><strong>Ciclo Lectivo:</strong> {new Date().getFullYear()}</p>
+                <div style={{ borderBottom: '2px solid', paddingBottom: '1rem', marginBottom: '2rem', textAlign: 'center' }} className="print-header">
+                    <h1 style={{ fontSize: '24pt', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', color: 'var(--text-primary)' }} className="print-text">Planificación Anual</h1>
+                    <h2 style={{ fontSize: '16pt', fontWeight: 'normal', marginBottom: '0.5rem', color: 'var(--text-primary)' }} className="print-text">{title || "Sin Título"}</h2>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', fontSize: '12pt', marginTop: '1rem', color: 'var(--text-secondary)' }} className="print-text">
+                        <p><strong className="print-text" style={{ color: 'var(--text-primary)' }}>Materia:</strong> {currentCourse?.name || 'No especificada'}</p>
+                        <p><strong className="print-text" style={{ color: 'var(--text-primary)' }}>Establecimiento:</strong> {currentSchool?.name || 'No especificada'}</p>
+                        <p><strong className="print-text" style={{ color: 'var(--text-primary)' }}>Ciclo Lectivo:</strong> {new Date().getFullYear()}</p>
                     </div>
                 </div>
 
@@ -261,12 +266,12 @@ export default function PlannerEditor() {
                     if (!contentBlocks[tab.id] || contentBlocks[tab.id] === '<p></p>') return null;
                     return (
                         <div key={tab.id} style={{ marginBottom: '2rem', breakInside: 'avoid' }}>
-                            <h3 style={{ fontSize: '14pt', fontWeight: 'bold', borderBottom: '1px solid #ccc', paddingBottom: '0.5rem', marginBottom: '1rem', textTransform: 'uppercase', color: '#000' }}>
+                            <h3 style={{ fontSize: '14pt', fontWeight: 'bold', borderBottom: '1px solid', borderColor: 'var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '1rem', textTransform: 'uppercase', color: 'var(--text-primary)' }} className="print-section-title print-text">
                                 {tab.label}
                             </h3>
                             <div
-                                className="print-richtext tiptap-editor-content"
-                                style={{ fontSize: '11pt', lineHeight: '1.6', color: '#000' }}
+                                className="print-richtext tiptap-editor-content print-text"
+                                style={{ fontSize: '11pt', lineHeight: '1.6', color: 'var(--text-secondary)' }}
                                 dangerouslySetInnerHTML={{ __html: contentBlocks[tab.id] }}
                             />
                         </div>
@@ -277,12 +282,20 @@ export default function PlannerEditor() {
                 @media print {
                     @page { margin: 1.5cm; size: portrait !important; }
                     body { background: white !important; -webkit-print-color-adjust: exact; color: black !important; }
-                    .print-document { display: block !important; }
+                    
+                    /* Limpiar márgenes de pantalla para el papel */
+                    .print-document { padding: 0 !important; }
+                    
+                    /* Forzar colores a negro oscuro */
+                    .print-text, .print-text * { color: black !important; }
+                    .print-header { border-bottom-color: black !important; }
+                    .print-section-title { border-bottom-color: #ccc !important; }
+                    
                     .print-richtext ul { list-style-type: disc; padding-left: 2rem; margin-bottom: 1rem; }
                     .print-richtext ol { list-style-type: decimal; padding-left: 2rem; margin-bottom: 1rem; }
                     .print-richtext p { margin-bottom: 1rem; }
                     .print-richtext h2 { font-size: 13pt; font-weight: bold; margin-bottom: 0.5rem; margin-top: 1rem; }
-                    .print-richtext blockquote { border-left: 3px solid #666; padding-left: 1rem; font-style: italic; color: #444; }
+                    .print-richtext blockquote { border-left: 3px solid #666; padding-left: 1rem; font-style: italic; color: #444 !important; }
                 }
             `}</style>
             </div>
