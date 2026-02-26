@@ -33,15 +33,12 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { planType } = body;
 
-        let title = 'Suscripción DocX';
-        let price = 20000; // Default Yearly
+        let title = 'Suscripción Mensual - DocX';
+        let price = 5000;
 
-        if (planType === 'monthly') {
-            title = 'Suscripción Mensual - DocX';
-            price = 2000; // Placeholder for monthly if implemented later
-        } else {
+        if (planType === 'yearly') {
             title = 'Suscripción Anual - DocX';
-            price = 20000;
+            price = 50000; // Let's keep a yearly option theoretically active for later, maybe 50000
         }
 
         step = 'PREPARE_MP';

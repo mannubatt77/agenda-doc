@@ -128,8 +128,8 @@ export default function PricingPage() {
                         </span>
                     </div>
 
-                    <p className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>$20.000 <span className="text-base font-normal" style={{ color: 'var(--text-muted)' }}>/ año</span></p>
-                    <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>Para docentes organizados.</p>
+                    <p className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>$5.000 <span className="text-base font-normal" style={{ color: 'var(--text-muted)' }}>/ mes</span></p>
+                    <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>Para docentes que quieren enseñar mejor.</p>
 
                     <ul className="space-y-3 mb-8 flex-1">
                         <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--text-primary)' }}>
@@ -156,7 +156,7 @@ export default function PricingPage() {
                         </div>
                     ) : (
                         <button
-                            onClick={() => handleSubscribe('yearly')}
+                            onClick={() => handleSubscribe('monthly')}
                             className="w-full py-3 px-4 rounded-lg transition-all font-medium shadow-lg hover:shadow-indigo-500/25"
                             style={{ backgroundColor: 'var(--accent-primary)', color: 'white' }}
                         >
@@ -168,7 +168,7 @@ export default function PricingPage() {
 
             <div className="mt-12 p-6 rounded-xl" style={{ backgroundColor: 'var(--bg-panel)', border: '1px solid var(--glass-border)' }}>
                 <h3 className="font-bold text-lg mb-2" style={{ color: 'var(--text-primary)' }}>¿Cómo funciona la licencia?</h3>
-                <p style={{ color: 'var(--text-secondary)' }}>La licencia es anual y personal. Te permite gestionar todas tus escuelas y cursos sin límites. Al finalizar el año, podrás renovar para mantener el acceso y guardar tu historial.</p>
+                <p style={{ color: 'var(--text-secondary)' }}>La licencia de esta versión es mensual y personal. Te permite gestionar todas tus escuelas y cursos sin límites mediante el pago en MercadoPago.</p>
             </div>
         </div>
     );
