@@ -61,18 +61,20 @@ export default function PlannerEditor() {
     }, [id, user, isNew, router]);
 
     const handleSave = async (silent = false) => {
-        if (!title.trim() || !selectedCourse) {
-            if (!silent) alert("Por favor, ingresa un título y selecciona una materia.");
+        if (!selectedCourse) {
+            if (!silent) alert("Por favor, selecciona una materia antes de guardar.");
             return;
         }
 
         if (!silent) setIsSaving(true);
 
         try {
+            const finalTitle = title.trim() || (currentCourse ? `Planificación de ${currentCourse.name}` : "Planificación Anual");
+
             const payload = {
                 user_id: user?.id,
                 course_id: selectedCourse,
-                title: title,
+                title: finalTitle,
                 academic_year: new Date().getFullYear(),
                 content_blocks: contentBlocks,
                 updated_at: new Date().toISOString()
@@ -127,7 +129,7 @@ export default function PlannerEditor() {
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Título de la planificación..."
+                            placeholder={currentCourse ? `Planificación de ${currentCourse.name}` : "Título opcional..."}
                             style={{
                                 flex: 1,
                                 fontSize: '1.5rem',
@@ -252,8 +254,9 @@ export default function PlannerEditor() {
             <div className="print-document" style={{ fontFamily: 'Georgia, serif', padding: '10mm 15mm' }}>
                 {/* Cabezal Formal */}
                 <div style={{ borderBottom: '2px solid', paddingBottom: '1rem', marginBottom: '2rem', textAlign: 'center' }} className="print-header">
-                    <h1 style={{ fontSize: '24pt', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', color: 'var(--text-primary)' }} className="print-text">Planificación Anual</h1>
-                    <h2 style={{ fontSize: '16pt', fontWeight: 'normal', marginBottom: '0.5rem', color: 'var(--text-primary)' }} className="print-text">{title || "Sin Título"}</h2>
+                    <h1 style={{ fontSize: '24pt', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', color: 'var(--text-primary)' }} className="print-text">
+                        {title && title !== "Nueva Planificación" && !title.includes("Planificación de") ? title : "Planificación Anual"}
+                    </h1>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', fontSize: '12pt', marginTop: '1rem', color: 'var(--text-secondary)' }} className="print-text">
                         <p><strong className="print-text" style={{ color: 'var(--text-primary)' }}>Materia:</strong> {currentCourse?.name || 'No especificada'}</p>
                         <p><strong className="print-text" style={{ color: 'var(--text-primary)' }}>Establecimiento:</strong> {currentSchool?.name || 'No especificada'}</p>
