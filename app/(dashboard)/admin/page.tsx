@@ -212,6 +212,7 @@ export default function AdminDashboard() {
                                 <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Último Inicio de Sesión</th>
                                 <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Estado Suscripción</th>
                                 <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Plan Actual</th>
+                                <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Caducidad Licencia</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -251,6 +252,9 @@ export default function AdminDashboard() {
                                         </td>
                                         <td style={{ padding: '1rem 1.5rem', color: '#9ca3af', textTransform: 'capitalize' }}>
                                             {u.subscription?.plan || '-'}
+                                        </td>
+                                        <td style={{ padding: '1rem 1.5rem', color: '#9ca3af' }}>
+                                            {u.subscription?.endDate ? new Date(u.subscription.endDate).toLocaleDateString('es-AR') : '-'}
                                         </td>
                                     </tr>
                                 )
