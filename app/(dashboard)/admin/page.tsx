@@ -164,14 +164,16 @@ export default function AdminDashboard() {
                             <LineChart data={stats.chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                 <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
-                                <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
+                                <YAxis yAxisId="left" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
+                                <YAxis yAxisId="right" orientation="right" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} tickFormatter={(value) => `$${value}`} />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: 'var(--bg-app)', borderColor: 'var(--glass-border)', color: 'white', borderRadius: '8px' }}
                                     itemStyle={{ color: 'white' }}
                                 />
                                 <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                                <Line type="monotone" name="Registros (Gratis)" dataKey="usuarios" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4, fill: '#9ca3af' }} />
-                                <Line type="monotone" name="Suscripciones (Premium)" dataKey="suscripciones" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, fill: '#6366f1' }} activeDot={{ r: 6 }} />
+                                <Line yAxisId="left" type="monotone" name="Registros (Gratis)" dataKey="usuarios" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4, fill: '#9ca3af' }} />
+                                <Line yAxisId="left" type="monotone" name="Suscripciones (Premium)" dataKey="suscripciones" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, fill: '#6366f1' }} activeDot={{ r: 6 }} />
+                                <Line yAxisId="right" type="monotone" name="Ingresos Mensuales (ARS)" dataKey="ingresos" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} activeDot={{ r: 6 }} />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
