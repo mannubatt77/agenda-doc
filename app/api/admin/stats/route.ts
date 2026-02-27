@@ -49,6 +49,25 @@ export async function GET() {
         const arpuMonthly = activeSubs.filter(s => s.plan_type === 'monthly').length * 4500;
         const estimatedMRR = arpuMonthly + (arpuYearly / 12); // Estimated Monthly Recurring Revenue
 
+        // 4. Generamos datos para Gráficos
+        const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const currentYear = new Date().getFullYear();
+        const chartData = months.map(m => ({ name: m, usuarios: 0, suscripciones: 0 }));
+
+        users.forEach(u => {
+            const date = new Date(u.created_at || 0);
+            if (date.getFullYear() === currentYear) {
+                chartData[date.getMonth()].usuarios++;
+            }
+        });
+
+        activeSubs.forEach(s => {
+            const date = new Date(s.start_date || s.created_at || 0);
+            if (date.getFullYear() === currentYear) {
+                chartData[date.getMonth()].suscripciones++;
+            }
+        });
+
         return NextResponse.json({
             summary: {
                 totalUsers,
@@ -57,6 +76,7 @@ export async function GET() {
                 totalExpired: expiredSubs.length,
                 estimatedMRR: estimatedMRR
             },
+            chartData,
             users: userDetails
         });
 

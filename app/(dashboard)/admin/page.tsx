@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, CreditCard, Activity, DollarSign, Search, ShieldAlert, ArrowLeft } from "lucide-react";
+import { Users, CreditCard, Activity, DollarSign, Search, ShieldAlert, ArrowLeft, TrendingUp } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
@@ -142,6 +143,32 @@ export default function AdminDashboard() {
                     <span className="text-xs text-indigo-300 mt-1">Suscripciones activas prorrateadas mensual</span>
                 </div>
             </div>
+
+            {/* Performance Chart */}
+            {stats.chartData && stats.chartData.length > 0 && (
+                <div className="bg-[var(--bg-panel)] p-6 rounded-xl border border-[var(--glass-border)] mb-8">
+                    <div className="flex items-center gap-2 mb-6">
+                        <TrendingUp className="text-indigo-400" size={20} />
+                        <h2 className="font-bold text-lg text-white">Crecimiento Anual (2026)</h2>
+                    </div>
+                    <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={stats.chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
+                                <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: 'var(--bg-app)', borderColor: 'var(--glass-border)', color: 'white', borderRadius: '8px' }}
+                                    itemStyle={{ color: 'white' }}
+                                />
+                                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                                <Line type="monotone" name="Registros (Gratis)" dataKey="usuarios" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4, fill: '#9ca3af' }} />
+                                <Line type="monotone" name="Suscripciones (Premium)" dataKey="suscripciones" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, fill: '#6366f1' }} activeDot={{ r: 6 }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            )}
 
             {/* Control Tabla y Búsquedas */}
             <div className="bg-[var(--bg-panel)] border border-[var(--glass-border)] rounded-xl overflow-hidden">
