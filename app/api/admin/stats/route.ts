@@ -20,11 +20,7 @@ export async function GET() {
         const { data: subsData, error: subsError } = await supabase.from('subscriptions').select('*');
         if (subsError) throw subsError;
 
-        // 3. Obtiene todos los pagos (Bypasseando RLS para sumar los ingresos reales)
-        const { data: paymentsData, error: paymentsError } = await supabase.from('payments').select('amount, created_at, status');
-        if (paymentsError) throw paymentsError;
-
-        // 4. Procesaremos los datos
+        // 3. Procesaremos los datos
         const users = authData.users;
         const totalUsers = users.length;
         const activeSubs = subsData.filter(s => s.status === 'active');
@@ -53,7 +49,7 @@ export async function GET() {
         const arpuMonthly = activeSubs.filter(s => s.plan_type === 'monthly').length * 4500;
         const estimatedMRR = arpuMonthly + (arpuYearly / 12); // Estimated Monthly Recurring Revenue
 
-        // 5. Generamos datos para Gráficos
+        // 4. Generamos datos para Gráficos
         const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
         const currentYear = new Date().getFullYear();
         const chartData = months.map(m => ({ name: m, usuarios: 0, suscripciones: 0, ingresos: 0 }));
@@ -69,19 +65,16 @@ export async function GET() {
             }
         });
 
+        // Sumamos las suscripciones y calculamos ingresos estimados por mes de activación
         activeSubs.forEach(s => {
             const date = new Date(s.start_date || s.created_at || 0);
             if (date.getFullYear() === currentYear) {
-                chartData[date.getMonth()].suscripciones++;
-            }
-        });
-
-        // Sumamos los ingresos mensuales usando la tabla de pagos
-        const successfulPayments = paymentsData.filter(p => p.status === 'approved' || p.status === 'success' || !p.status);
-        successfulPayments.forEach(p => {
-            const date = new Date(p.created_at || 0);
-            if (date.getFullYear() === currentYear) {
-                chartData[date.getMonth()].ingresos += Number(p.amount || 0);
+                const monthIndex = date.getMonth();
+                chartData[monthIndex].suscripciones++;
+                
+                // Estimación de ingresos: Si es 'yearly' sumamos $45000 a ese mes, si es 'monthly' sumamos $4500
+                const isYearly = s.plan_type === 'yearly';
+                chartData[monthIndex].ingresos += isYearly ? 45000 : 4500;
             }
         });
 
