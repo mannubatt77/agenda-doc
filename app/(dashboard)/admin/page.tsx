@@ -76,9 +76,13 @@ export default function AdminDashboard() {
     }
 
     if (filterStatus !== "all") {
-        filteredUsers = filteredUsers.filter((u: any) =>
-            u.subscription?.status === filterStatus || (!u.subscription && filterStatus === "expired")
-        );
+        filteredUsers = filteredUsers.filter((u: any) => {
+            const st = u.subscription?.status;
+            if (filterStatus === "expired") {
+                return st === "expired" || st === "cancelled" || !st;
+            }
+            return st === filterStatus;
+        });
     }
 
     return (
