@@ -164,18 +164,36 @@ export default function AdminDashboard() {
                             <LineChart data={stats.chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                 <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
-                                <YAxis yAxisId="left" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
-                                <YAxis yAxisId="right" orientation="right" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} tickFormatter={(value) => `$${value}`} />
+                                <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: 'var(--bg-app)', borderColor: 'var(--glass-border)', color: 'white', borderRadius: '8px' }}
                                     itemStyle={{ color: 'white' }}
                                 />
                                 <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                                <Line yAxisId="left" type="monotone" name="Registros (Gratis)" dataKey="usuarios" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4, fill: '#9ca3af' }} />
-                                <Line yAxisId="left" type="monotone" name="Suscripciones (Premium)" dataKey="suscripciones" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, fill: '#6366f1' }} activeDot={{ r: 6 }} />
-                                <Line yAxisId="right" type="monotone" name="Ingresos Mensuales (ARS)" dataKey="ingresos" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} activeDot={{ r: 6 }} />
+                                <Line type="monotone" name="Registros (Gratis)" dataKey="usuarios" stroke="#9ca3af" strokeWidth={3} dot={{ r: 4, fill: '#9ca3af' }} />
+                                <Line type="monotone" name="Suscripciones (Premium)" dataKey="suscripciones" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, fill: '#6366f1' }} activeDot={{ r: 6 }} />
                             </LineChart>
                         </ResponsiveContainer>
+                    </div>
+                </div>
+            )}
+
+            {/* Ingresos Mensuales Textuales */}
+            {stats.chartData && stats.chartData.length > 0 && (
+                <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1.5rem', borderRadius: 'var(--radius-xl)', border: '1px solid var(--glass-border)', marginBottom: '2rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                        <DollarSign style={{ color: '#10b981' }} size={20} />
+                        <h2 style={{ fontWeight: 'bold', fontSize: '1.125rem', color: 'white', margin: 0 }}>Desglose de Ingresos ({currentYear})</h2>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '1rem' }}>
+                        {stats.chartData.map((d: any, idx: number) => (
+                            <div key={idx} style={{ padding: '1rem', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+                                <div style={{ fontSize: '0.875rem', color: '#9ca3af', marginBottom: '0.5rem' }}>{d.name}</div>
+                                <div style={{ fontSize: '1.125rem', fontWeight: 'bold', color: d.ingresos > 0 ? '#10b981' : 'white' }}>
+                                    ${d.ingresos.toLocaleString('es-AR')}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}
