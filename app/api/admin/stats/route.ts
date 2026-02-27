@@ -57,7 +57,11 @@ export async function GET() {
         users.forEach(u => {
             const date = new Date(u.created_at || 0);
             if (date.getFullYear() === currentYear) {
-                chartData[date.getMonth()].usuarios++;
+                // Verificamos si este usuario tiene una suscripción activa
+                const tieneSubActiva = activeSubs.some(s => s.user_id === u.id);
+                if (!tieneSubActiva) {
+                    chartData[date.getMonth()].usuarios++;
+                }
             }
         });
 
