@@ -85,6 +85,8 @@ export default function AdminDashboard() {
         });
     }
 
+    const currentYear = new Date().getFullYear();
+
     return (
         <div style={{ padding: '1.5rem', maxWidth: '80rem', margin: '0 auto', paddingBottom: '8rem' }}>
             <div style={{
