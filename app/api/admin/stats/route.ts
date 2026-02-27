@@ -24,7 +24,7 @@ export async function GET() {
         const users = authData.users;
         const totalUsers = users.length;
         const activeSubs = subsData.filter(s => s.status === 'active');
-        const trialSubs = subsData.filter(s => s.status === 'trial');
+        const trialSubsNum = users.length - activeSubs.length; // Los que no son premium están en modo gratuito
         const expiredSubs = subsData.filter(s => s.status === 'expired' || s.status === 'cancelled');
 
         // Unimos los usuarios con su membresía actual
@@ -72,7 +72,7 @@ export async function GET() {
             summary: {
                 totalUsers,
                 totalActiveSubs: activeSubs.length,
-                totalTrialSubs: trialSubs.length,
+                totalTrialSubs: trialSubsNum,
                 totalExpired: expiredSubs.length,
                 estimatedMRR: estimatedMRR
             },

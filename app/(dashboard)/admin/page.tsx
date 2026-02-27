@@ -12,7 +12,7 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filterStatus, setFilterStatus] = useState("all"); // 'all', 'active', 'trial', 'expired'
+    const [filterStatus, setFilterStatus] = useState("all"); // 'all', 'active', 'free'
     const [error, setError] = useState<string | null>(null);
 
     // Emails con privilegios de ver este panel. Si estás testeando, asegúrate de que tu mail coincida aquí
@@ -78,8 +78,8 @@ export default function AdminDashboard() {
     if (filterStatus !== "all") {
         filteredUsers = filteredUsers.filter((u: any) => {
             const st = u.subscription?.status;
-            if (filterStatus === "expired") {
-                return st === "expired" || st === "cancelled" || !st;
+            if (filterStatus === "free") {
+                return !st || st !== "active";
             }
             return st === filterStatus;
         });
@@ -132,10 +132,10 @@ export default function AdminDashboard() {
                     <span style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#818cf8' }}>{stats.summary.totalActiveSubs}</span>
                 </div>
 
-                {/* En Prueba / Trial */}
+                {/* Plan Gratuito */}
                 <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1.25rem', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(34,197,94,0.3)', display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#4ade80', marginBottom: '0.5rem' }}>
-                        <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>En Prueba Gratuita (Trial)</span>
+                        <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>Cuentas Gratuitas</span>
                         <Activity size={18} />
                     </div>
                     <span style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#4ade80' }}>{stats.summary.totalTrialSubs}</span>
@@ -199,9 +199,8 @@ export default function AdminDashboard() {
                             style={{ backgroundColor: 'var(--bg-input)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.875rem', borderRadius: 'var(--radius-md)', padding: '0.5rem 0.75rem', outline: 'none' }}
                         >
                             <option value="all">Todos los Estados</option>
-                            <option value="active">Premium (Active)</option>
-                            <option value="trial">Prueba (Trial)</option>
-                            <option value="expired">Expirado/Sin Plan</option>
+                            <option value="active">Premium</option>
+                            <option value="free">Gratuito / Expirado</option>
                         </select>
                     </div>
                 </div>
@@ -232,10 +231,6 @@ export default function AdminDashboard() {
                                     statusColor = "#818cf8";
                                     statusBorder = "1px solid rgba(99,102,241,0.3)";
                                     fontWeight = "600";
-                                } else if (st === 'trial') {
-                                    statusBg = "rgba(34,197,94,0.2)";
-                                    statusColor = "#4ade80";
-                                    statusBorder = "1px solid rgba(34,197,94,0.3)";
                                 }
 
                                 return (
@@ -251,7 +246,7 @@ export default function AdminDashboard() {
                                         </td>
                                         <td style={{ padding: '1rem 1.5rem' }}>
                                             <span style={{ padding: '0.25rem 0.625rem', borderRadius: '9999px', fontSize: '0.75rem', backgroundColor: statusBg, color: statusColor, border: statusBorder, textTransform: 'capitalize', userSelect: 'none', fontWeight: fontWeight }}>
-                                                {st || 'Sin Cuenta MP'}
+                                                {st === 'active' ? 'Premium' : 'Gratuito'}
                                             </span>
                                         </td>
                                         <td style={{ padding: '1rem 1.5rem', color: '#9ca3af', textTransform: 'capitalize' }}>
