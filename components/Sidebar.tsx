@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Home, User, BookOpen, Calendar, LogOut, X, FileText, BarChart2, LayoutGrid, Users, PenTool, Clock } from 'lucide-react';
+import { Home, User, BookOpen, Calendar, LogOut, X, FileText, BarChart2, LayoutGrid, Users, PenTool, Clock, ShieldAlert } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface SidebarProps {
@@ -8,7 +8,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
 
     const handleLogout = () => {
         logout();
@@ -27,6 +27,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         { icon: Users, label: 'Grupos Mágicos', href: '/groups' },
         { icon: PenTool, label: 'Planificaciones', href: '/planners' },
     ];
+
+    const ADMIN_ACCOUNTS = ['mannubatt77@gmail.com', 'manubatt@gmail.com', 'admin@agenda.doc'];
+    const isAdmin = user && ADMIN_ACCOUNTS.some(dom => user.email?.toLowerCase().includes(dom.split('@')[0]));
+
+    if (isAdmin) {
+        menuItems.push({ icon: ShieldAlert, label: 'Panel Admin', href: '/admin' });
+    }
 
     return (
         <>
