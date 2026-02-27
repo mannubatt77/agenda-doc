@@ -16,7 +16,7 @@ export default function AdminDashboard() {
 
     // Emails con privilegios de ver este panel. Si estás testeando, asegúrate de que tu mail coincida aquí
     // o elimine temporalmente este chequeo de seguridad
-    const ADMIN_ACCOUNTS = ['mannubatt77@gmail.com', 'manubatt@gmail.com', 'admin@agenda.doc'];
+    const ADMIN_ACCOUNTS = ['mbattoia.cnsc@gmail.com', 'mannubatt77@gmail.com', 'manubatt@gmail.com', 'admin@agenda.doc'];
 
     useEffect(() => {
         if (!user) return;

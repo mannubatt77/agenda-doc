@@ -28,7 +28,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         { icon: PenTool, label: 'Planificaciones', href: '/planners' },
     ];
 
-    const ADMIN_ACCOUNTS = ['mannubatt77@gmail.com', 'manubatt@gmail.com', 'admin@agenda.doc'];
+    const ADMIN_ACCOUNTS = ['mbattoia.cnsc@gmail.com', 'mannubatt77@gmail.com', 'manubatt@gmail.com', 'admin@agenda.doc'];
     const isAdmin = user && ADMIN_ACCOUNTS.some(dom => user.email?.toLowerCase().includes(dom.split('@')[0]));
 
     if (isAdmin) {
