@@ -82,76 +82,80 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div className="p-6 max-w-7xl mx-auto pb-32">
-            <div className="flex justify-between items-center mb-8 bg-[var(--bg-panel)] p-6 rounded-xl border border-[var(--accent-primary)] shadow-[0_0_40px_rgba(99,102,241,0.15)] relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10">
+        <div style={{ padding: '1.5rem', maxWidth: '80rem', margin: '0 auto', paddingBottom: '8rem' }}>
+            <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem',
+                backgroundColor: 'var(--bg-panel)', padding: '1.5rem', borderRadius: 'var(--radius-xl)',
+                border: '1px solid var(--accent-primary)', boxShadow: '0 0 40px rgba(99,102,241,0.15)',
+                position: 'relative', overflow: 'hidden'
+            }}>
+                <div style={{ position: 'absolute', top: 0, right: 0, padding: '2rem', opacity: 0.1 }}>
                     <ShieldAlert size={150} />
                 </div>
-                <div className="z-10 relative">
+                <div style={{ zIndex: 10, position: 'relative' }}>
                     <button
                         onClick={() => router.back()}
                         style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', marginBottom: '1rem', border: 'none', background: 'transparent', cursor: 'pointer' }}
-                        className="hover:text-white"
                     >
                         <ArrowLeft size={16} /> Volver al Inicio
                     </button>
-                    <h1 className="text-3xl font-bold flex items-center gap-3 text-white">
+                    <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'white' }}>
                         Panel de Administración
                     </h1>
-                    <p className="mt-2 text-[var(--text-secondary)] max-w-2xl">
+                    <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)', maxWidth: '42rem' }}>
                         Vista global en tiempo real de todos los usuarios registrados, sus suscripciones (Mercado Pago / Trial) y desempeño comercial de la plataforma Agenda.doc
                     </p>
                 </div>
             </div>
 
             {/* Tarjetas KPI de Resumen */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
                 {/* Total Users */}
-                <div className="bg-[var(--bg-panel)] p-5 rounded-xl border border-[var(--glass-border)] flex flex-col">
-                    <div className="flex items-center justify-between text-gray-400 mb-2">
-                        <span className="font-medium text-sm">Cuentas Registradas</span>
+                <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1.25rem', borderRadius: 'var(--radius-xl)', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#9ca3af', marginBottom: '0.5rem' }}>
+                        <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>Cuentas Registradas</span>
                         <Users size={18} />
                     </div>
-                    <span className="text-3xl font-bold text-white">{stats.summary.totalUsers}</span>
+                    <span style={{ fontSize: '1.875rem', fontWeight: 'bold', color: 'white' }}>{stats.summary.totalUsers}</span>
                 </div>
 
                 {/* Subscripciones Activas Premium */}
-                <div className="bg-[var(--bg-panel)] p-5 rounded-xl border border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.1)] flex flex-col">
-                    <div className="flex items-center justify-between text-indigo-400 mb-2">
-                        <span className="font-medium text-sm">Suscripciones (Premium)</span>
+                <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1.25rem', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(99,102,241,0.5)', boxShadow: '0 0 15px rgba(99,102,241,0.1)', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#818cf8', marginBottom: '0.5rem' }}>
+                        <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>Suscripciones (Premium)</span>
                         <CreditCard size={18} />
                     </div>
-                    <span className="text-3xl font-bold text-indigo-400">{stats.summary.totalActiveSubs}</span>
+                    <span style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#818cf8' }}>{stats.summary.totalActiveSubs}</span>
                 </div>
 
                 {/* En Prueba / Trial */}
-                <div className="bg-[var(--bg-panel)] p-5 rounded-xl border border-green-500/30 flex flex-col">
-                    <div className="flex items-center justify-between text-green-400 mb-2">
-                        <span className="font-medium text-sm">En Prueba Gratuita (Trial)</span>
+                <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1.25rem', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(34,197,94,0.3)', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#4ade80', marginBottom: '0.5rem' }}>
+                        <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>En Prueba Gratuita (Trial)</span>
                         <Activity size={18} />
                     </div>
-                    <span className="text-3xl font-bold text-green-400">{stats.summary.totalTrialSubs}</span>
+                    <span style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#4ade80' }}>{stats.summary.totalTrialSubs}</span>
                 </div>
 
                 {/* Ingreso Esperado (MRR) - Sólo demostrativo */}
-                <div className="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 p-5 rounded-xl border border-indigo-500 flex flex-col">
-                    <div className="flex items-center justify-between text-indigo-200 mb-2">
-                        <span className="font-medium text-sm">MRR Estimado (ARS)</span>
+                <div style={{ backgroundImage: 'linear-gradient(to bottom right, rgba(49,46,129,0.5), rgba(88,28,135,0.5))', padding: '1.25rem', borderRadius: 'var(--radius-xl)', border: '1px solid #6366f1', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#c7d2fe', marginBottom: '0.5rem' }}>
+                        <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>MRR Estimado (ARS)</span>
                         <DollarSign size={18} />
                     </div>
-                    <span className="text-3xl font-bold text-white">${stats.summary.estimatedMRR.toLocaleString('es-AR', { maximumFractionDigits: 0 })}</span>
-                    <span className="text-xs text-indigo-300 mt-1">Suscripciones activas prorrateadas mensual</span>
+                    <span style={{ fontSize: '1.875rem', fontWeight: 'bold', color: 'white' }}>${stats.summary.estimatedMRR.toLocaleString('es-AR', { maximumFractionDigits: 0 })}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#a5b4fc', marginTop: '0.25rem' }}>Suscripciones activas prorrateadas mensual</span>
                 </div>
             </div>
 
             {/* Performance Chart */}
             {stats.chartData && stats.chartData.length > 0 && (
-                <div className="bg-[var(--bg-panel)] p-6 rounded-xl border border-[var(--glass-border)] mb-8">
-                    <div className="flex items-center gap-2 mb-6">
-                        <TrendingUp className="text-indigo-400" size={20} />
-                        <h2 className="font-bold text-lg text-white">Crecimiento Anual (2026)</h2>
+                <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1.5rem', borderRadius: 'var(--radius-xl)', border: '1px solid var(--glass-border)', marginBottom: '2rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                        <TrendingUp style={{ color: '#818cf8' }} size={20} />
+                        <h2 style={{ fontWeight: 'bold', fontSize: '1.125rem', color: 'white', margin: 0 }}>Crecimiento Anual (2026)</h2>
                     </div>
-                    <div className="h-[300px] w-full">
+                    <div style={{ height: '300px', width: '100%' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={stats.chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
@@ -171,24 +175,24 @@ export default function AdminDashboard() {
             )}
 
             {/* Control Tabla y Búsquedas */}
-            <div className="bg-[var(--bg-panel)] border border-[var(--glass-border)] rounded-xl overflow-hidden">
-                <div className="p-4 border-b border-[var(--glass-border)] flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <h2 className="font-bold text-lg text-white">Directorio de Usuarios ({filteredUsers.length})</h2>
-                    <div className="flex items-center gap-4 w-full sm:w-auto">
-                        <div className="flex items-center gap-2 bg-[var(--bg-input)] px-3 py-2 rounded-lg flex-1 sm:w-64 border border-[var(--glass-border)]">
-                            <Search size={16} className="text-gray-400" />
+            <div style={{ backgroundColor: 'var(--bg-panel)', border: '1px solid var(--glass-border)', borderRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
+                <div style={{ padding: '1rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                    <h2 style={{ fontWeight: 'bold', fontSize: '1.125rem', color: 'white', margin: 0 }}>Directorio de Usuarios ({filteredUsers.length})</h2>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: 'auto' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--bg-input)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)' }}>
+                            <Search size={16} style={{ color: '#9ca3af' }} />
                             <input
                                 type="text"
                                 placeholder="Buscar email..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="bg-transparent border-none text-white outline-none w-full text-sm"
+                                style={{ backgroundColor: 'transparent', border: 'none', color: 'white', outline: 'none', width: '200px', fontSize: '0.875rem' }}
                             />
                         </div>
                         <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
-                            className="bg-[var(--bg-input)] border border-[var(--glass-border)] text-white text-sm rounded-lg px-3 py-2 outline-none"
+                            style={{ backgroundColor: 'var(--bg-input)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.875rem', borderRadius: 'var(--radius-md)', padding: '0.5rem 0.75rem', outline: 'none' }}
                         >
                             <option value="all">Todos los Estados</option>
                             <option value="active">Premium (Active)</option>
@@ -199,48 +203,60 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* La Tabla gigante clásica de admin */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-300">
-                        <thead className="text-xs text-gray-400 uppercase bg-[rgba(255,255,255,0.02)] border-b border-[var(--glass-border)]">
+                <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', textAlign: 'left', fontSize: '0.875rem', color: '#d1d5db', borderCollapse: 'collapse' }}>
+                        <thead style={{ fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', backgroundColor: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--glass-border)' }}>
                             <tr>
-                                <th scope="col" className="px-6 py-4">Usuario (Email)</th>
-                                <th scope="col" className="px-6 py-4">Fecha de Registro</th>
-                                <th scope="col" className="px-6 py-4">Último Inicio de Sesión</th>
-                                <th scope="col" className="px-6 py-4">Estado Suscripción</th>
-                                <th scope="col" className="px-6 py-4">Plan Actual</th>
+                                <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Usuario (Email)</th>
+                                <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Fecha de Registro</th>
+                                <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Último Inicio de Sesión</th>
+                                <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Estado Suscripción</th>
+                                <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Plan Actual</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredUsers.length > 0 ? filteredUsers.map((u: any, index: number) => {
                                 const st = u.subscription?.status;
-                                let statusColor = "bg-gray-500/20 text-gray-400 border-gray-500/30"; // expired/none
-                                if (st === 'active') statusColor = "bg-indigo-500/20 text-indigo-400 border-indigo-500/30 font-semibold";
-                                if (st === 'trial') statusColor = "bg-green-500/20 text-green-400 border-green-500/30";
+                                let statusBg = "rgba(107,114,128,0.2)";
+                                let statusColor = "#9ca3af";
+                                let statusBorder = "1px solid rgba(107,114,128,0.3)";
+                                let fontWeight = "normal";
+
+                                if (st === 'active') {
+                                    statusBg = "rgba(99,102,241,0.2)";
+                                    statusColor = "#818cf8";
+                                    statusBorder = "1px solid rgba(99,102,241,0.3)";
+                                    fontWeight = "600";
+                                } else if (st === 'trial') {
+                                    statusBg = "rgba(34,197,94,0.2)";
+                                    statusColor = "#4ade80";
+                                    statusBorder = "1px solid rgba(34,197,94,0.3)";
+                                }
 
                                 return (
-                                    <tr key={u.id} className={`border-b border-[var(--glass-border)] hover:bg-[rgba(255,255,255,0.02)] transition-colors ${index % 2 === 0 ? 'bg-[rgba(255,255,255,0.01)]' : ''}`}>
-                                        <td className="px-6 py-4 font-medium text-white">
+                                    <tr key={u.id} style={{ borderBottom: '1px solid var(--glass-border)', backgroundColor: index % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent', transition: 'background-color 0.2s' }}>
+                                        <td style={{ padding: '1rem 1.5rem', fontWeight: 500, color: 'white' }}>
                                             {u.email}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td style={{ padding: '1rem 1.5rem' }}>
                                             {new Date(u.createdAt).toLocaleDateString('es-AR')}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td style={{ padding: '1rem 1.5rem' }}>
                                             {u.lastSignIn ? new Date(u.lastSignIn).toLocaleString('es-AR') : 'Nunca ingresó'}
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2.5 py-1 rounded-full text-xs border ${statusColor} capitalize select-none`}>
+                                        <td style={{ padding: '1rem 1.5rem' }}>
+                                            <span style={{ padding: '0.25rem 0.625rem', borderRadius: '9999px', fontSize: '0.75rem', backgroundColor: statusBg, color: statusColor, border: statusBorder, textTransform: 'capitalize', userSelect: 'none', fontWeight: fontWeight }}>
                                                 {st || 'Sin Cuenta MP'}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-gray-400 capitalize">
+                                        <td style={{ padding: '1rem 1.5rem', color: '#9ca3af', textTransform: 'capitalize' }}>
                                             {u.subscription?.plan || '-'}
                                         </td>
                                     </tr>
                                 )
                             }) : (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
+                                    <td colSpan={5} style={{ padding: '2.5rem 1.5rem', textAlign: 'center', color: '#6b7280' }}>
                                         No se encontraron usuarios bajo este filtro.
                                     </td>
                                 </tr>
@@ -249,7 +265,6 @@ export default function AdminDashboard() {
                     </table>
                 </div>
             </div>
-
         </div>
     );
 }
