@@ -13,6 +13,7 @@ export default function AdminDashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterStatus, setFilterStatus] = useState("all"); // 'all', 'active', 'free'
+    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
     const [error, setError] = useState<string | null>(null);
 
     // Emails con privilegios de ver este panel. Si estás testeando, asegúrate de que tu mail coincida aquí
@@ -157,9 +158,21 @@ export default function AdminDashboard() {
             {/* Performance Chart */}
             {stats.chartData && stats.chartData.length > 0 && (
                 <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1.5rem', borderRadius: 'var(--radius-xl)', border: '1px solid var(--glass-border)', marginBottom: '2rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                        <TrendingUp style={{ color: '#818cf8' }} size={20} />
-                        <h2 style={{ fontWeight: 'bold', fontSize: '1.125rem', color: 'white', margin: 0 }}>Crecimiento Anual (2026)</h2>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <TrendingUp style={{ color: '#818cf8' }} size={20} />
+                            <h2 style={{ fontWeight: 'bold', fontSize: '1.125rem', color: 'white', margin: 0 }}>Crecimiento Anual ({stats.selectedYear || selectedYear})</h2>
+                        </div>
+                        <select
+                            value={selectedYear}
+                            onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
+                            style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', outline: 'none', cursor: 'pointer' }}
+                        >
+                            {Array.from({ length: 10 }).map((_, i) => {
+                                const y = new Date().getFullYear() - 1 + i; // Del año anterior a 8 años adelante
+                                return <option key={y} value={y}>{y}</option>
+                            })}
+                        </select>
                     </div>
                     <div style={{ height: '300px', width: '100%' }}>
                         <ResponsiveContainer width="100%" height="100%">
@@ -185,7 +198,7 @@ export default function AdminDashboard() {
                 <div style={{ backgroundColor: 'var(--bg-panel)', padding: '1.5rem', borderRadius: 'var(--radius-xl)', border: '1px solid var(--glass-border)', marginBottom: '2rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
                         <DollarSign style={{ color: '#10b981' }} size={20} />
-                        <h2 style={{ fontWeight: 'bold', fontSize: '1.125rem', color: 'white', margin: 0 }}>Desglose de Ingresos ({currentYear})</h2>
+                        <h2 style={{ fontWeight: 'bold', fontSize: '1.125rem', color: 'white', margin: 0 }}>Desglose de Ingresos ({stats.selectedYear || selectedYear})</h2>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '1rem' }}>
                         {stats.chartData.map((d: any, idx: number) => (

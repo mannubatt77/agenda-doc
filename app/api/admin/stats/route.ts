@@ -6,8 +6,12 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
+        const { searchParams } = new URL(req.url);
+        const yearParam = searchParams.get('year');
+        const selectedYear = yearParam ? parseInt(yearParam, 10) : new Date().getFullYear();
+
         if (!supabaseUrl || !supabaseKey) {
             return NextResponse.json({ error: "Faltan credenciales maestras (Service Role) en el servidor." }, { status: 500 });
         }
@@ -51,12 +55,11 @@ export async function GET() {
 
         // 4. Generamos datos para Gráficos
         const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        const currentYear = new Date().getFullYear();
         const chartData = months.map(m => ({ name: m, usuarios: 0, suscripciones: 0, ingresos: 0 }));
 
         users.forEach(u => {
             const date = new Date(u.created_at || 0);
-            if (date.getFullYear() === currentYear) {
+            if (date.getFullYear() === selectedYear) {
                 // Verificamos si este usuario tiene una suscripción activa
                 const tieneSubActiva = activeSubs.some(s => s.user_id === u.id);
                 if (!tieneSubActiva) {
@@ -68,10 +71,10 @@ export async function GET() {
         // Sumamos las suscripciones y calculamos ingresos estimados por mes de activación
         activeSubs.forEach(s => {
             const date = new Date(s.start_date || s.created_at || 0);
-            if (date.getFullYear() === currentYear) {
+            if (date.getFullYear() === selectedYear) {
                 const monthIndex = date.getMonth();
                 chartData[monthIndex].suscripciones++;
-                
+
                 // Estimación de ingresos: Si es 'yearly' sumamos $45000 a ese mes, si es 'monthly' sumamos $4500
                 const isYearly = s.plan_type === 'yearly';
                 chartData[monthIndex].ingresos += isYearly ? 45000 : 4500;
@@ -87,7 +90,8 @@ export async function GET() {
                 estimatedMRR: estimatedMRR
             },
             chartData,
-            users: userDetails
+            users: userDetails,
+            selectedYear
         });
 
     } catch (error: any) {
