@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Home, User, BookOpen, Calendar, LogOut, X, FileText, BarChart2, LayoutGrid, Users, PenTool, Clock, ShieldAlert } from 'lucide-react';
+import { Home, User, BookOpen, Calendar, LogOut, X, FileText, BarChart2, LayoutGrid, Users, PenTool, Clock, ShieldAlert, HeartPulse } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface SidebarProps {
@@ -26,6 +26,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         { icon: Clock, label: 'Mi Horario', href: '/schedule-builder' },
         { icon: Users, label: 'Grupos Mágicos', href: '/groups' },
         { icon: PenTool, label: 'Planificaciones', href: '/planners' },
+        { icon: HeartPulse, label: 'Adaptaciones', href: '/adaptations' },
     ];
 
     const ADMIN_ACCOUNTS = ['mbattoia.cnsc@gmail.com', 'mannubatt77@gmail.com', 'manubatt@gmail.com', 'admin@agenda.doc'];
