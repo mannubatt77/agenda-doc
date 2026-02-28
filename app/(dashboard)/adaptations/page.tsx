@@ -165,7 +165,7 @@ export default function AdaptationsPage() {
                         style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', backgroundColor: 'var(--bg-input)', color: 'white', minWidth: '200px', opacity: !selectedCourseId ? 0.5 : 1, flex: 1 }}
                     >
                         <option value="">3. Alumno</option>
-                        {courseStudents.map(s => <option key={s.id} value={s.id}>{s.last_name}, {s.first_name}</option>)}
+                        {courseStudents.map(s => <option key={s.id} value={s.id}>{s.surname}, {s.name}</option>)}
                     </select>
                 </div>
             </div>
@@ -187,7 +187,7 @@ export default function AdaptationsPage() {
                                     Ficha de Adaptación Curricular
                                 </h2>
                                 <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                                    {activeStudent.last_name}, {activeStudent.first_name}
+                                    {activeStudent.surname}, {activeStudent.name}
                                 </p>
                             </div>
 
@@ -198,7 +198,7 @@ export default function AdaptationsPage() {
                                     placeholder="Ej: Trastorno del Espectro Autista..."
                                     value={diagnosis}
                                     onChange={(e) => setDiagnosis(e.target.value)}
-                                    style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--bg-input)', border: '1px solid var(--glass-border)', color: 'white', placeholder: 'var(--text-muted)' }}
+                                    style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--bg-input)', border: '1px solid var(--glass-border)', color: 'white' }}
                                 />
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
                                     {COMMON_DIAGNOSES.map(d => (
