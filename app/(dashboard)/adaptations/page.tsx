@@ -2,7 +2,7 @@
 
 import { useData } from "@/context/DataContext";
 import { useState, useEffect } from "react";
-import { HeartPulse, CheckCircle, Save, Loader2, AlertCircle } from "lucide-react";
+import { HeartPulse, CheckCircle, Save, Loader2, AlertCircle, Edit2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const COMMON_DIAGNOSES = [
@@ -44,6 +44,7 @@ export default function AdaptationsPage() {
     const [isSaving, setIsSaving] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(false);
     const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+    const [allAdaptations, setAllAdaptations] = useState<any[]>([]);
 
     const filteredCourses = courses.filter(c => c.school_id === selectedSchoolId);
     const courseStudents = students.filter(s => s.course_id === selectedCourseId);
@@ -84,6 +85,23 @@ export default function AdaptationsPage() {
         fetchAdaptations();
     }, [selectedStudentId]);
 
+    const fetchAllAdaptations = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('student_adaptations')
+                .select('student_id, diagnosis, adaptations');
+            if (data && !error) {
+                setAllAdaptations(data);
+            }
+        } catch (e) {
+            console.error("Error fetching all adaptations:", e);
+        }
+    };
+
+    useEffect(() => {
+        fetchAllAdaptations();
+    }, []);
+
     const handleSave = async () => {
         if (!selectedStudentId) return;
         setIsSaving(true);
@@ -105,12 +123,25 @@ export default function AdaptationsPage() {
 
             if (error) throw error;
             setSaveStatus("success");
+            fetchAllAdaptations();
             setTimeout(() => setSaveStatus("idle"), 3000);
         } catch (error) {
             console.error("Error saving adaptations:", error);
             setSaveStatus("error");
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const toggleDiagnosis = (dText: string) => {
+        const shortD = dText.split(' (')[0];
+        if (diagnosis.includes(shortD)) {
+            // Remove it, cleaning up possible double commas
+            const newDiag = diagnosis.replace(shortD, "").split(',').map(s => s.trim()).filter(Boolean).join(', ');
+            setDiagnosis(newDiag);
+        } else {
+            // Add it
+            setDiagnosis(prev => prev ? prev + ", " + shortD : shortD);
         }
     };
 
@@ -201,15 +232,19 @@ export default function AdaptationsPage() {
                                     style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--bg-input)', border: '1px solid var(--glass-border)', color: 'white' }}
                                 />
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
-                                    {COMMON_DIAGNOSES.map(d => (
-                                        <button
-                                            key={d}
-                                            onClick={() => setDiagnosis(d)}
-                                            style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', borderRadius: '9999px', backgroundColor: diagnosis === d ? 'rgba(236, 72, 153, 0.2)' : 'rgba(255,255,255,0.05)', color: diagnosis === d ? '#ec4899' : 'var(--text-muted)', border: `1px solid ${diagnosis === d ? '#ec4899' : 'var(--glass-border)'}`, cursor: 'pointer', transition: 'all 0.2s' }}
-                                        >
-                                            {d.split(' (')[0]}
-                                        </button>
-                                    ))}
+                                    {COMMON_DIAGNOSES.map(d => {
+                                        const shortD = d.split(' (')[0];
+                                        const isSelected = diagnosis.includes(shortD);
+                                        return (
+                                            <button
+                                                key={d}
+                                                onClick={() => toggleDiagnosis(d)}
+                                                style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', borderRadius: '9999px', backgroundColor: isSelected ? 'rgba(236, 72, 153, 0.2)' : 'rgba(255,255,255,0.05)', color: isSelected ? '#ec4899' : 'var(--text-muted)', border: `1px solid ${isSelected ? '#ec4899' : 'var(--glass-border)'}`, cursor: 'pointer', transition: 'all 0.2s' }}
+                                            >
+                                                {shortD}
+                                            </button>
+                                        )
+                                    })}
                                 </div>
                             </div>
 
@@ -271,6 +306,46 @@ export default function AdaptationsPage() {
                     <p style={{ color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto' }}>
                         Elija una escuela, un curso y un alumno de los menús superiores para cargar o visualizar sus adaptaciones curriculares.
                     </p>
+                </div>
+            )}
+
+            {/* List of active adaptations for current course */}
+            {selectedCourseId && allAdaptations.length > 0 && (
+                <div style={{ marginTop: '3rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'white', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.75rem' }}>
+                        Fichas cargadas en este curso
+                    </h3>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+                        {courseStudents.filter(s => allAdaptations.some(a => a.student_id === s.id)).map(student => {
+                            const adaptation = allAdaptations.find(a => a.student_id === student.id);
+                            return (
+                                <div key={student.id} style={{ padding: '1.5rem', borderRadius: 'var(--radius-lg)', backgroundColor: 'var(--bg-panel)', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                                        <div>
+                                            <h4 style={{ fontWeight: 600, fontSize: '1rem', color: 'white' }}>{student.surname}, {student.name}</h4>
+                                            <p style={{ fontSize: '0.875rem', color: '#ec4899', fontWeight: 500 }}>{adaptation?.diagnosis || 'Sin diagnóstico'}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => setSelectedStudentId(student.id)}
+                                            style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            title="Ver / Editar"
+                                        >
+                                            <Edit2 size={16} />
+                                        </button>
+                                    </div>
+                                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                        {adaptation?.adaptations || 'Sin especificaciones detalladas.'}
+                                    </p>
+                                </div>
+                            );
+                        })}
+                        {courseStudents.filter(s => allAdaptations.some(a => a.student_id === s.id)).length === 0 && (
+                            <div style={{ gridColumn: '1 / -1', padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', border: '1px dashed var(--glass-border)', borderRadius: 'var(--radius-lg)' }}>
+                                No hay alumnos con adaptaciones en este curso.
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </div>
