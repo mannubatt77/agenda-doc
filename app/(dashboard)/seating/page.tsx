@@ -197,78 +197,102 @@ export default function SeatingPage() {
                     {/* Classroom Grid */}
                     <div style={{ flex: 1, backgroundColor: 'var(--bg-panel)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--glass-border)', minWidth: '500px', overflowX: 'auto' }}>
 
-                        {/* Pizarra representation */}
-                        <div style={{ width: '60%', height: '40px', backgroundColor: '#334155', border: '2px solid #1e293b', borderRadius: '8px', margin: '0 auto 3rem auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontWeight: 'bold', letterSpacing: '2px' }} className="print-pizarra print-exact">
-                            PIZARRA
+                        {/* Print styles specifically for adapting to a single page */}
+                        <style>{`
+                            @media print {
+                                .seating-wrapper {
+                                    height: 100vh !important;
+                                    width: 100% !important;
+                                    display: flex !important;
+                                    flex-direction: column !important;
+                                    align-items: center !important;
+                                    justify-content: center !important;
+                                    page-break-inside: avoid !important;
+                                    margin: 0 !important;
+                                }
+                                .seating-grid {
+                                    max-height: 75vh !important;
+                                    max-width: 95vw !important;
+                                }
+                                .selection-header, .no-print {
+                                    display: none !important;
+                                }
+                            }
+                        `}</style>
+
+                        <div className="print-exact seating-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                            {/* Pizarra representation */}
+                            <div style={{ width: '60%', maxWidth: '400px', height: '40px', backgroundColor: '#334155', border: '2px solid #1e293b', borderRadius: '8px', marginBottom: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontWeight: 'bold', letterSpacing: '2px' }} className="print-pizarra print-exact">
+                                PIZARRA
+                            </div>
+
+                            {/* The Grid (Desks) */}
+                            <div className="print-exact seating-grid" style={{
+                                display: 'grid',
+                                gridTemplateColumns: `repeat(${columns}, 1fr)`,
+                                gap: '1rem',
+                                width: '100%',
+                                maxWidth: '800px',
+                            }}>
+                                {Array.from({ length: rows }).map((_, y) => (
+                                    Array.from({ length: columns }).map((_, x) => {
+                                        const key = `${x},${y}`;
+                                        const studentId = seatingState[key];
+                                        const student = studentId ? courseStudents.find(s => s.id === studentId) : null;
+
+                                        // Dynamic Aisle Logic
+                                        const groupSize = Math.max(1, Math.floor(columns / (aisles + 1)));
+                                        const isAisleRight = aisles > 0 && (x + 1) % groupSize === 0 && (x + 1) < columns;
+
+                                        return (
+                                            <div
+                                                key={key}
+                                                onClick={() => handleCellClick(x, y)}
+                                                style={{
+                                                    aspectRatio: '5/4',
+                                                    border: student ? '2px solid var(--accent-primary)' : '2px dashed var(--glass-border)',
+                                                    borderRadius: '8px',
+                                                    backgroundColor: student ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    cursor: 'pointer',
+                                                    padding: '0.5rem',
+                                                    textAlign: 'center',
+                                                    marginRight: isAisleRight ? '2rem' : '0', // Central Aisle
+                                                    transition: 'all 0.2s',
+                                                    boxShadow: student ? '0 4px 12px rgba(59, 130, 246, 0.15)' : 'none'
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    if (selectedStudentToAssign && !student) {
+                                                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                                                        e.currentTarget.style.borderColor = 'var(--text-secondary)';
+                                                    }
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    if (!student) {
+                                                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+                                                        e.currentTarget.style.borderColor = 'var(--glass-border)';
+                                                    }
+                                                }}
+                                            >
+                                                {student ? (
+                                                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white', lineHeight: '1.2' }}>
+                                                        {student.surname}, {student.name.charAt(0)}.
+                                                    </div>
+                                                ) : (
+                                                    <span style={{ color: 'var(--glass-border)', fontSize: '1.5rem', display: selectedStudentToAssign ? 'block' : 'none' }}>+</span>
+                                                )}
+                                            </div>
+                                        );
+                                    })
+                                ))}
+                            </div>
+
+                            <div className="no-print" style={{ marginTop: '3rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                                Para desasignar un pupitre, simplemente haga clic en él.
+                            </div>
                         </div>
-
-                        {/* The Grid (Desks) */}
-                        <div className="print-exact" style={{
-                            display: 'grid',
-                            gridTemplateColumns: `repeat(${columns}, 1fr)`,
-                            gap: '1rem',
-                            maxWidth: '800px',
-                            margin: '0 auto'
-                        }}>
-                            {Array.from({ length: rows }).map((_, y) => (
-                                Array.from({ length: columns }).map((_, x) => {
-                                    const key = `${x},${y}`;
-                                    const studentId = seatingState[key];
-                                    const student = studentId ? courseStudents.find(s => s.id === studentId) : null;
-
-                                    // Dynamic Aisle Logic
-                                    const groupSize = Math.max(1, Math.floor(columns / (aisles + 1)));
-                                    const isAisleRight = aisles > 0 && (x + 1) % groupSize === 0 && (x + 1) < columns;
-
-                                    return (
-                                        <div
-                                            key={key}
-                                            onClick={() => handleCellClick(x, y)}
-                                            style={{
-                                                aspectRatio: '5/4',
-                                                border: student ? '2px solid var(--accent-primary)' : '2px dashed var(--glass-border)',
-                                                borderRadius: '8px',
-                                                backgroundColor: student ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255, 255, 255, 0.02)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                cursor: 'pointer',
-                                                padding: '0.5rem',
-                                                textAlign: 'center',
-                                                marginRight: isAisleRight ? '2rem' : '0', // Central Aisle
-                                                transition: 'all 0.2s',
-                                                boxShadow: student ? '0 4px 12px rgba(59, 130, 246, 0.15)' : 'none'
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                if (selectedStudentToAssign && !student) {
-                                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                                                    e.currentTarget.style.borderColor = 'var(--text-secondary)';
-                                                }
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                if (!student) {
-                                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
-                                                    e.currentTarget.style.borderColor = 'var(--glass-border)';
-                                                }
-                                            }}
-                                        >
-                                            {student ? (
-                                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white', lineHeight: '1.2' }}>
-                                                    {student.surname}, {student.name.charAt(0)}.
-                                                </div>
-                                            ) : (
-                                                <span style={{ color: 'var(--glass-border)', fontSize: '1.5rem', display: selectedStudentToAssign ? 'block' : 'none' }}>+</span>
-                                            )}
-                                        </div>
-                                    );
-                                })
-                            ))}
-                        </div>
-
-                        <div className="no-print" style={{ marginTop: '3rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                            Para desasignar un pupitre, simplemente haga clic en él.
-                        </div>
-
                     </div>
                 </div>
             )}
