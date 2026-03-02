@@ -689,7 +689,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
             alert("Error creando ciclo lectivo: " + error.message);
         } else {
             alert(`Ciclo lectivo ${targetYear} creado exitosamente.`);
-            setSelectedYear(targetYear);
+            window.location.reload();
         }
     };
 
