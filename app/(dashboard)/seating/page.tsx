@@ -200,19 +200,46 @@ export default function SeatingPage() {
                         {/* Print styles specifically for adapting to a single page */}
                         <style>{`
                             @media print {
+                                @page {
+                                    size: landscape;
+                                    margin: 10mm;
+                                }
+                                html, body {
+                                    height: 100%;
+                                    margin: 0 !important;
+                                    padding: 0 !important;
+                                    overflow: hidden !important;
+                                    background-color: transparent !important;
+                                    -webkit-print-color-adjust: exact !important;
+                                    print-color-adjust: exact !important;
+                                }
+                                /* Hide next.js app wrappers explicitly */
+                                body > div:first-child,
+                                div[data-reactroot],
+                                main {
+                                    height: 100% !important;
+                                    margin: 0 !important;
+                                    padding: 0 !important;
+                                }
                                 .seating-wrapper {
-                                    height: 100vh !important;
+                                    height: 100% !important;
                                     width: 100% !important;
                                     display: flex !important;
                                     flex-direction: column !important;
                                     align-items: center !important;
                                     justify-content: center !important;
                                     page-break-inside: avoid !important;
+                                    page-break-after: avoid !important;
                                     margin: 0 !important;
+                                    padding: 0 !important;
+                                    overflow: hidden !important;
                                 }
                                 .seating-grid {
-                                    max-height: 75vh !important;
-                                    max-width: 95vw !important;
+                                    width: 100% !important;
+                                    max-width: 100vw !important;
+                                    margin-top: 1rem;
+                                    display: flex !important;
+                                    justify-content: center !important;
                                 }
                                 .selection-header, .no-print {
                                     display: none !important;
@@ -226,66 +253,82 @@ export default function SeatingPage() {
                                 PIZARRA
                             </div>
 
-                            {/* The Grid (Desks) */}
                             <div className="print-exact seating-grid" style={{
-                                display: 'grid',
-                                gridTemplateColumns: `repeat(${columns}, 1fr)`,
+                                display: 'flex',
+                                flexDirection: 'column',
                                 gap: '1rem',
                                 width: '100%',
-                                maxWidth: '800px',
+                                alignItems: 'center',
+                                paddingBottom: '0'
                             }}>
                                 {Array.from({ length: rows }).map((_, y) => (
-                                    Array.from({ length: columns }).map((_, x) => {
-                                        const key = `${x},${y}`;
-                                        const studentId = seatingState[key];
-                                        const student = studentId ? courseStudents.find(s => s.id === studentId) : null;
+                                    <div key={y} style={{ display: 'flex', gap: '1rem', justifyContent: 'center', width: '100%' }}>
+                                        {Array.from({ length: columns }).map((_, x) => {
+                                            const key = `${x},${y}`;
+                                            const studentId = seatingState[key];
+                                            const student = studentId ? courseStudents.find(s => s.id === studentId) : null;
 
-                                        // Dynamic Aisle Logic
-                                        const groupSize = Math.max(1, Math.floor(columns / (aisles + 1)));
-                                        const isAisleRight = aisles > 0 && (x + 1) % groupSize === 0 && (x + 1) < columns;
+                                            // Dynamic Aisle Logic
+                                            const groupSize = Math.max(1, Math.floor(columns / (aisles + 1)));
+                                            const isAisleRight = aisles > 0 && (x + 1) % groupSize === 0 && (x + 1) < columns;
 
-                                        return (
-                                            <div
-                                                key={key}
-                                                onClick={() => handleCellClick(x, y)}
-                                                style={{
-                                                    aspectRatio: '5/4',
-                                                    border: student ? '2px solid var(--accent-primary)' : '2px dashed var(--glass-border)',
-                                                    borderRadius: '8px',
-                                                    backgroundColor: student ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255, 255, 255, 0.02)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    cursor: 'pointer',
-                                                    padding: '0.5rem',
-                                                    textAlign: 'center',
-                                                    marginRight: isAisleRight ? '2rem' : '0', // Central Aisle
-                                                    transition: 'all 0.2s',
-                                                    boxShadow: student ? '0 4px 12px rgba(59, 130, 246, 0.15)' : 'none'
-                                                }}
-                                                onMouseEnter={(e) => {
-                                                    if (selectedStudentToAssign && !student) {
-                                                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                                                        e.currentTarget.style.borderColor = 'var(--text-secondary)';
-                                                    }
-                                                }}
-                                                onMouseLeave={(e) => {
-                                                    if (!student) {
-                                                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
-                                                        e.currentTarget.style.borderColor = 'var(--glass-border)';
-                                                    }
-                                                }}
-                                            >
-                                                {student ? (
-                                                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'white', lineHeight: '1.2' }}>
-                                                        {student.surname}, {student.name.charAt(0)}.
-                                                    </div>
-                                                ) : (
-                                                    <span style={{ color: 'var(--glass-border)', fontSize: '1.5rem', display: selectedStudentToAssign ? 'block' : 'none' }}>+</span>
-                                                )}
-                                            </div>
-                                        );
-                                    })
+                                            return (
+                                                <div
+                                                    key={key}
+                                                    onClick={() => handleCellClick(x, y)}
+                                                    style={{
+                                                        width: `clamp(60px, calc(800px / ${columns} - 1rem), 140px)`,
+                                                        aspectRatio: '5/4',
+                                                        border: student ? '2px solid var(--accent-primary)' : '2px dashed var(--glass-border)',
+                                                        borderRadius: '8px',
+                                                        backgroundColor: student ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        cursor: 'pointer',
+                                                        padding: '0.25rem',
+                                                        textAlign: 'center',
+                                                        marginRight: isAisleRight ? '3rem' : '0', // Central Aisle
+                                                        transition: 'all 0.2s',
+                                                        boxShadow: student ? '0 4px 12px rgba(59, 130, 246, 0.15)' : 'none',
+                                                        overflow: 'hidden',
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        if (selectedStudentToAssign && !student) {
+                                                            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                                                            e.currentTarget.style.borderColor = 'var(--text-secondary)';
+                                                        }
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        if (!student) {
+                                                            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+                                                            e.currentTarget.style.borderColor = 'var(--glass-border)';
+                                                        }
+                                                    }}
+                                                >
+                                                    {student ? (
+                                                        <div style={{
+                                                            fontSize: '0.80rem',
+                                                            fontWeight: 600,
+                                                            color: 'white',
+                                                            lineHeight: '1.2',
+                                                            wordBreak: 'break-word',
+                                                            overflowWrap: 'anywhere',
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 3,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                            width: '100%'
+                                                        }}>
+                                                            {student.surname}, {student.name.charAt(0)}.
+                                                        </div>
+                                                    ) : (
+                                                        <span style={{ color: 'var(--glass-border)', fontSize: '1.5rem', display: selectedStudentToAssign ? 'block' : 'none' }}>+</span>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 ))}
                             </div>
 
