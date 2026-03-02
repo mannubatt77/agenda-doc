@@ -133,6 +133,21 @@ export default function RegisterPage() {
                         />
                     </div>
 
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                        <input
+                            type="checkbox"
+                            id="terms"
+                            required
+                            style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent-primary)' }}
+                        />
+                        <label htmlFor="terms" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                            He leído y acepto los{' '}
+                            <Link href="/terms" style={{ color: 'var(--accent-primary)', textDecoration: 'underline' }}>
+                                Términos de Servicio
+                            </Link>
+                        </label>
+                    </div>
+
                     <button
                         type="submit"
                         disabled={isSubmitting}
