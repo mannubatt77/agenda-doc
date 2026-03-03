@@ -241,7 +241,7 @@ export default function ProfilePage() {
                                 fontWeight: 'bold',
                                 color: subscription?.status === 'active' ? 'var(--content-green)' : 'var(--text-primary)'
                             }}>
-                                {subscription?.status === 'active' ? 'Profesional (Anual)' : 'Prueba Gratuita'}
+                                {subscription?.status === 'active' ? `Profesional (${subscription.plan_type === 'monthly' ? 'Mensual' : 'Anual'})` : 'Prueba Gratuita'}
                             </span>
                             {subscription?.status === 'active' && (
                                 <span style={{
