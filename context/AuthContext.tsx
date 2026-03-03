@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabase";
 interface AuthContextType {
     user: User | null;
     login: (email: string, password: string) => Promise<boolean>;
-    register: (name: string, email: string, password: string) => Promise<boolean>;
+    register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
     logout: () => Promise<void>;
     updateProfile: (data: Partial<User>) => Promise<void>;
     isLoading: boolean;
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return true;
     };
 
-    const register = async (name: string, email: string, password: string): Promise<boolean> => {
+    const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
         setIsLoading(true);
         // We can split name into First/Last if needed, or just store as name
         // The original App interface has name & surname.
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (error) {
             console.error(error);
             setIsLoading(false);
-            return false;
+            return { success: false, error: error.message };
         }
 
         // Supabase specific: If email confirmation is enabled, session is null
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             alert("Cuenta creada. Por favor verifica tu correo electrónico para confirmar tu cuenta antes de iniciar sesión.");
             // Optionally redirect to login
             router.push("/login");
-            return true;
+            return { success: true };
         }
 
         // If session exists, onAuthStateChange should handle the rest, but we can push to dashboard
@@ -115,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // But if we push to dashboard immediately, we assume user is logged in.
 
         router.push("/dashboard");
-        return true;
+        return { success: true };
     };
 
     const updateProfile = async (data: Partial<User>) => {

@@ -24,9 +24,9 @@ export default function RegisterPage() {
             return;
         }
 
-        const success = await register(name, email, password);
-        if (!success) {
-            setError("El usuario ya está registrado o hubo un error.");
+        const result = await register(name, email, password);
+        if (!result.success) {
+            setError(result.error || "El usuario ya está registrado o hubo un error.");
             setIsSubmitting(false);
         }
     };
