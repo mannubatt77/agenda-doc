@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, CreditCard, Activity, DollarSign, Search, ShieldAlert, ArrowLeft, TrendingUp } from "lucide-react";
+import { Users, CreditCard, Activity, DollarSign, Search, ShieldAlert, ArrowLeft, TrendingUp, Award, Trash2 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ export default function AdminDashboard() {
     const [filterStatus, setFilterStatus] = useState("all"); // 'all', 'active', 'free'
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
     const [error, setError] = useState<string | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     // Emails con privilegios de ver este panel. Si estás testeando, asegúrate de que tu mail coincida aquí
     // o elimine temporalmente este chequeo de seguridad
@@ -48,6 +49,79 @@ export default function AdminDashboard() {
 
         fetchStats();
     }, [user, router]);
+
+    const handlePremium = async (userId: string, email: string) => {
+        const daysStr = prompt(`¿Cuántos días de Premium deseas otorgarle a ${email}?`);
+        if (!daysStr) return;
+        const days = parseInt(daysStr, 10);
+        if (isNaN(days) || days <= 0) {
+            alert("Cantidad de días inválida.");
+            return;
+        }
+
+        if (!confirm(`¿Estás seguro de otorgar ${days} días Premium a ${email}?`)) return;
+
+        setIsProcessing(true);
+        try {
+            const { supabase } = await import("@/lib/supabase");
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("No hay sesión activa.");
+
+            const res = await fetch('/api/admin/users/premium', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
+                body: JSON.stringify({ userId, days })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Error al otorgar premium.");
+
+            alert("¡Días premium otorgados correctamente! La página se recargará para ver los cambios.");
+            window.location.reload();
+        } catch (e: any) {
+            alert("Error: " + e.message);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handleDeleteUser = async (userId: string, email: string) => {
+        const confirmDelete = confirm(`⚠️ CUIDADO ⚠️\nEstás a punto de ELIMINAR permanentemente a:\n${email}\n\n¿Estás completamente seguro? Esta acción no se puede deshacer.`);
+        if (!confirmDelete) return;
+
+        const confirmTwice = prompt('Escribe "ELIMINAR" para confirmar la eliminación definitiva:');
+        if (confirmTwice !== "ELIMINAR") {
+            alert("Eliminación cancelada.");
+            return;
+        }
+
+        setIsProcessing(true);
+        try {
+            const { supabase } = await import("@/lib/supabase");
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("No hay sesión activa.");
+
+            const res = await fetch('/api/admin/users/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
+                body: JSON.stringify({ userId })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Error al eliminar usuario.");
+
+            alert("Usuario eliminado correctamente de la base de datos.");
+            window.location.reload();
+        } catch (e: any) {
+            alert("Error: " + e.message);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
 
     if (!user || isLoading) {
         return (
@@ -251,6 +325,7 @@ export default function AdminDashboard() {
                                 <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Estado Suscripción</th>
                                 <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Plan Actual</th>
                                 <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Caducidad Licencia</th>
+                                <th scope="col" style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--glass-border)', textAlign: 'center' }}>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -290,11 +365,29 @@ export default function AdminDashboard() {
                                         <td style={{ padding: '1rem 1.5rem', color: '#9ca3af' }}>
                                             {u.subscription?.endDate ? new Date(u.subscription.endDate).toLocaleDateString('es-AR') : '-'}
                                         </td>
+                                        <td style={{ padding: '1rem 1.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                                            <button
+                                                onClick={() => handlePremium(u.id, u.email)}
+                                                disabled={isProcessing}
+                                                style={{ padding: '0.4rem 0.8rem', backgroundColor: 'rgba(34,197,94,0.1)', color: '#4ade80', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 'var(--radius-md)', cursor: isProcessing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', fontWeight: 600, transition: 'all 0.2s', opacity: isProcessing ? 0.5 : 1 }}
+                                                title="Otorgar días premium gratis"
+                                            >
+                                                <Award size={14} /> Dar Premium
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteUser(u.id, u.email)}
+                                                disabled={isProcessing}
+                                                style={{ padding: '0.4rem 0.8rem', backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 'var(--radius-md)', cursor: isProcessing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', fontWeight: 600, transition: 'all 0.2s', opacity: isProcessing ? 0.5 : 1 }}
+                                                title="Eliminar usuario del sistema totalmente"
+                                            >
+                                                <Trash2 size={14} /> Eliminar
+                                            </button>
+                                        </td>
                                     </tr>
                                 )
                             }) : (
                                 <tr>
-                                    <td colSpan={5} style={{ padding: '2.5rem 1.5rem', textAlign: 'center', color: '#6b7280' }}>
+                                    <td colSpan={7} style={{ padding: '2.5rem 1.5rem', textAlign: 'center', color: '#6b7280' }}>
                                         No se encontraron usuarios bajo este filtro.
                                     </td>
                                 </tr>
