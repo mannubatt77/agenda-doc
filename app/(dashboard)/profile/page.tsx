@@ -3,7 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useData } from "@/context/DataContext";
 import { useState } from "react";
-import { Camera, Plus, Trash2, Save, Calendar } from "lucide-react";
+import { Camera, Plus, Trash2, Save, Calendar, Key } from "lucide-react";
 
 export default function ProfilePage() {
     const { user, updateProfile } = useAuth();
@@ -15,6 +15,41 @@ export default function ProfilePage() {
     const [name, setName] = useState(user?.name || "");
     const [studies, setStudies] = useState<string[]>(user?.studies || []);
     const [newStudy, setNewStudy] = useState("");
+
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [passwordMsg, setPasswordMsg] = useState({ type: '', text: '' });
+
+    const handleChangePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setPasswordMsg({ type: '', text: '' });
+
+        if (newPassword.length < 6) {
+            setPasswordMsg({ type: 'error', text: 'La contraseña debe tener al menos 6 caracteres.' });
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setPasswordMsg({ type: 'error', text: 'Las contraseñas no coinciden.' });
+            return;
+        }
+
+        setIsChangingPassword(true);
+        try {
+            const { supabase } = await import("@/lib/supabase");
+            const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+            if (error) throw error;
+
+            setPasswordMsg({ type: 'success', text: '¡Contraseña actualizada correctamente!' });
+            setNewPassword("");
+            setConfirmPassword("");
+        } catch (err: any) {
+            setPasswordMsg({ type: 'error', text: 'Error al cambiar contraseña: ' + err.message });
+        } finally {
+            setIsChangingPassword(false);
+        }
+    };
 
     const handleSave = async () => {
         await updateProfile({ name, studies });
@@ -281,6 +316,94 @@ export default function ProfilePage() {
                         </a>
                     )}
                 </div>
+            </div>
+
+            {/* Password Change */}
+            <div style={{
+                marginTop: '2rem',
+                backgroundColor: 'var(--bg-panel)',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--glass-border)',
+                padding: '2rem'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                    <Key size={24} style={{ color: 'var(--accent-primary)' }} />
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Seguridad y Contraseña</h2>
+                </div>
+
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                    Desde aquí puedes actualizar tu contraseña de acceso a la plataforma en cualquier momento.
+                </p>
+
+                <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '400px' }}>
+                    {passwordMsg.text && (
+                        <div style={{
+                            padding: '0.75rem',
+                            borderRadius: 'var(--radius-md)',
+                            backgroundColor: passwordMsg.type === 'error' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+                            color: passwordMsg.type === 'error' ? 'var(--content-red)' : 'var(--content-green)',
+                            fontSize: '0.875rem'
+                        }}>
+                            {passwordMsg.text}
+                        </div>
+                    )}
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+                            Nueva Contraseña
+                        </label>
+                        <input
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            placeholder="Mínimo 6 caracteres"
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                borderRadius: 'var(--radius-md)',
+                                backgroundColor: 'var(--bg-app)',
+                                border: '1px solid var(--glass-border)',
+                                color: 'white',
+                                outline: 'none'
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+                            Confirmar Nueva Contraseña
+                        </label>
+                        <input
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="Repite la contraseña"
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                borderRadius: 'var(--radius-md)',
+                                backgroundColor: 'var(--bg-app)',
+                                border: '1px solid var(--glass-border)',
+                                color: 'white',
+                                outline: 'none'
+                            }}
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={isChangingPassword || !newPassword || !confirmPassword}
+                        style={{
+                            marginTop: '0.5rem',
+                            padding: '0.75rem 1.5rem',
+                            borderRadius: 'var(--radius-md)',
+                            backgroundColor: 'var(--bg-input)',
+                            border: '1px solid var(--glass-border)',
+                            color: (isChangingPassword || !newPassword || !confirmPassword) ? 'var(--text-muted)' : 'var(--accent-primary)',
+                            fontWeight: 600,
+                            cursor: (isChangingPassword || !newPassword || !confirmPassword) ? 'not-allowed' : 'pointer'
+                        }}
+                    >
+                        {isChangingPassword ? 'Actualizando...' : 'Cambiar Contraseña'}
+                    </button>
+                </form>
             </div>
 
             {/* Academic Year Management */}
