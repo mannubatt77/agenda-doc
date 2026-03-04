@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, CreditCard, Activity, DollarSign, Search, ShieldAlert, ArrowLeft, TrendingUp, Award, Trash2 } from "lucide-react";
+import { Users, CreditCard, Activity, DollarSign, Search, ShieldAlert, ArrowLeft, TrendingUp, Award, Trash2, Key } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -80,6 +80,41 @@ export default function AdminDashboard() {
 
             alert("¡Días premium otorgados correctamente! La página se recargará para ver los cambios.");
             window.location.reload();
+        } catch (e: any) {
+            alert("Error: " + e.message);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handleChangePassword = async (userId: string, email: string) => {
+        const newPassword = prompt(`Por favor ingresa la nueva contraseña temporal para el usuario ${email}:\n(Debe tener 6 caracteres como mínimo)`);
+        if (!newPassword) return;
+        if (newPassword.length < 6) {
+            alert("La contraseña debe tener al menos 6 caracteres.");
+            return;
+        }
+
+        if (!confirm(`¿Estás seguro de forzar la contraseña de ${email} a:\n"${newPassword}" ?`)) return;
+
+        setIsProcessing(true);
+        try {
+            const { supabase } = await import("@/lib/supabase");
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("No hay sesión activa.");
+
+            const res = await fetch('/api/admin/users/password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
+                body: JSON.stringify({ userId, newPassword })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Error al cambiar la contraseña.");
+
+            alert(`Contraseña cambiada exitosamente.\nUsuario: ${email}\nNueva Clave: ${newPassword}\n\nYa puedes comunicarle esta clave al usuario.`);
         } catch (e: any) {
             alert("Error: " + e.message);
         } finally {
@@ -373,6 +408,14 @@ export default function AdminDashboard() {
                                                 title="Otorgar días premium gratis"
                                             >
                                                 <Award size={14} /> Dar Premium
+                                            </button>
+                                            <button
+                                                onClick={() => handleChangePassword(u.id, u.email)}
+                                                disabled={isProcessing}
+                                                style={{ padding: '0.4rem 0.8rem', backgroundColor: 'rgba(234,179,8,0.1)', color: '#eab308', border: '1px solid rgba(234,179,8,0.3)', borderRadius: 'var(--radius-md)', cursor: isProcessing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', fontWeight: 600, transition: 'all 0.2s', opacity: isProcessing ? 0.5 : 1 }}
+                                                title="Blanquear contraseña"
+                                            >
+                                                <Key size={14} /> Clave
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteUser(u.id, u.email)}
